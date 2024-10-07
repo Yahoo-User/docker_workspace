@@ -1,0 +1,30 @@
+[
+    {
+        "Name": "newNetwork",                                                               <--- ***: network name
+        "Id": "afa8ff97763c2bbba58a9cc0fc75270461a6fc1ebafcbcfaa1a4781c41dd5f0c",           <--- ***: network id
+        "Created": "2023-12-21T05:46:33.573327811Z",
+        "Scope": "local",                                                                   <--- ***
+        "Driver": "bridge",                                                                 <--- ***
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [                                                                     <--- ***
+                {
+                    "Subnet": "172.18.0.0/16",                                              <--- ***
+                    "Gateway": "172.18.0.1"                                                 <--- ***
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},                                                                   <--- ***: connected containers
+        "Options": {},
+        "Labels": {}
+    }
+]

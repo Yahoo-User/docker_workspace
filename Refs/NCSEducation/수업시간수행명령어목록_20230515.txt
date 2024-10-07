@@ -1,0 +1,182 @@
+# 1. Dockerfile 의 사용
+
+> docker image rm <삭제할 이미지명>
+
+> docker image ls
+
+> docker build -t yoseph_image .    # Image 생성
+
+> docker run --name yoseph -d -p 8000:8080 yoseph_image # Container 생성 및 실행
+> docker ps -a
+
+http://localhost:8000
+
+
+# 2. 이미지 등록 & publish
+
+> docker tag ex22_original2 레지스트리이름
+
+> docker tag ex22_original2 도커허브아이디/이미지이름:버전번호
+    $ dc push cherryneo/ex_original2:1.1
+
+> docker push <생성한 이미지이름>
+    $ dc push cherryneo/ex_original2:1.1
+
+
+# 3. Docker Hub Login
+
+> docker login -u <docker hub 사용자계정명>
+> docker login -u cherryneo
+...
+... : <input personal access token>
+
+> docker logout
+
+
+# 4. Docker Compose 실행
+
+# 4-1. Docket Compose ps
+> /usr/bin/docker-compose ps -a
+
+# 4-1. in the foreground
+> /usr/bin/docker-compose -f ./com_folder/docker-compose.yml up 		# Up
+> /usr/bin/docker-compose -f ./com_folder/docker-compose.yml down 		# Down
+> /usr/bin/docker-compose -f ./com_folder/docker-compose.yml stop 		# Stop
+
+# 4-2. in the background
+> /usr/bin/docker-compose -f ./com_folder/docker-compose.yml up -d 		# Up
+> /usr/bin/docker-compose -f ./com_folder/docker-compose.yml down		# Down
+> /usr/bin/docker-compose -f ./com_folder/docker-compose.yml stop		# Stop
+
+
+
+# 쿠버네티스 명령어 연습
+
+> kubectl api-versions
+> kubectl api-resources
+> kubectl get pods
+> kubectl get namespaces
+> kubectl get pods -n kube-system
+> kubectl get nodes
+> kubectl apply -f ./apa000pod.yml
+> kubectl get pods -o wide
+> kubectl get pod -o wide
+> kubectl delete -f ./apa000pod.yml 
+> kubectl get pods -o wide
+> kubectl apply -f ./apa000dep.yml
+> kubectl get pods -o wide
+
+------------------------------------
+> kubectl edit -f ./apa000ser.yml
+------------------------------------
+  1 # Please edit the object below. Lines beginning with a '#' will be ignored,
+  2 # and an empty file will abort the edit. If an error occurs while saving this file will be
+  3 # reopened with the relevant failures.
+  4 #
+  5 apiVersion: v1
+  6 kind: Service
+  7 metadata:
+  8   annotations:
+  9     kubectl.kubernetes.io/last-applied-configuration: |
+ 10       {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"apa000ser","namespace":"default"},"spec":{"ports":[{"nodePort":30080,"port":8099,"protocol":    "TCP","targetPort":80}],"selector":{"app":"apa000kube"},"type":"NodePort"}}
+ 11   creationTimestamp: "2023-05-14T05:31:35Z"
+ 12   name: apa000ser
+ 13   namespace: default
+ 14   resourceVersion: "13840"
+ 15   uid: f6636c15-8bf9-4e4e-ab1a-be3a3b48dd9f
+ 16 spec:
+ 17   clusterIP: 10.109.70.136
+ 18   clusterIPs:
+ 19   - 10.109.70.136
+ 20   externalTrafficPolicy: Cluster
+ 21   internalTrafficPolicy: Cluster
+ 22   ipFamilies:
+ 23   - IPv4
+ 24   ipFamilyPolicy: SingleStack
+ 25   ports:
+ 26   - nodePort: 30080
+ 27     port: 8099
+ 28     protocol: TCP
+ 29     targetPort: 80
+ 30   selector:
+ 31     app: apa000kube
+ 32   sessionAffinity: None
+ 33   type: NodePort
+ 34 status:
+ 35   loadBalancer:
+ 36     ingress:
+ 37     - hostname: localhost
+~                            
+
+------------------------------------
+> kubectl edit -f ./apa000pod.yml
+------------------------------------
+
+> kubectl api-resources
+
+# 바로 위 명령어 결과의 "KIND" 항목 지정
+> kubectl describe StorageClass
+
+--------------- 실습1 ---------------
+> kubectl apply -f ./apa000ser.yml
+> kubectl get services
+> kubectl get services -o wide
+
+http://localhost:30080/ 접속시도 (nodePort 로 접속해야 함)
+
+
+
+--------------- 실습2 ---------------
+> kubectl get pods
+
+# 위 명령어의 출력결과에서, "특정 pod" 에 대한 상세내역 및 로그출력
+> kubectl describe 	pods/apa000dep-84d9f4dbf8-f8m4v
+> kubectl logs 		pods/apa000dep-84d9f4dbf8-f8m4v
+
+# 전체 pods 에 대한 상세내역 출력
+> kubectl describe pods
+
+
+
+--------------- 실습3: 직접 pod 생성 ---------------
+> kubectl run pod000 --image=nginx --port=8080
+> kubectl get pods
+> kubectl get pods -o wide
+> kubectl delete pod pod000 # 생성한 pod이름 지정
+
+
+
+--------------- 실습4: yaml 설정변경 & 적용 ---------------
+> kubectl apply -f ./apa000dep.yml # replica 개수 수정 및 적용
+> kubectl get pods
+
+> kubectl delete pod/apa000dep-84d9f4dbf8-56mb4 # 특정 pod 삭제
+> kubectl get pods # replica 개수를 다시 유지함
+
+
+
+--------------- 실습5: image 설정변경 & 적용  ---------------
+> kubectl apply -f ./apa000dep.yml 	# image 변경(httpd => nginx)
+> kubectl get pods
+
+http://localhost:30080/ 접속시도 (nodePort 로 접속해야 함)
+
+
+
+--------------- 실습6: replica 개수 0으로 설정 및 변경 ---------------
+> kubectl apply -f ./apa000dep.yml 	# replica 개수 0으로 설정
+
+> kubectl get pods 						# pods 모두 삭제
+> kubectl delete pod apa000pod			# pod 명 지정
+
+
+------------------------------
+
+> kubectl delete -f apa000dep.yml
+
+> kubectl get pods
+
+
+> kubectl get services
+> kubectl delete service apa000ser
+> kubectl delete service kubernetes

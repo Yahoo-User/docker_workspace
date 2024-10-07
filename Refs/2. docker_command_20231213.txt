@@ -1,0 +1,3235 @@
+*************************************************************
+* The usage of "docket" Command                             *
+*************************************************************
+
+01. Architecture of "docker" Command.																<--- ***
+
+	> docker super-command   sub-command    [ options ]     target     [arguments]
+			-------------  -------------  -------------  -----------  -----------
+			① What ?      ② How            ④        ③ Target        ⑤      
+			(Target Type)		 To Do ?	                 (Name)
+
+	Here,
+
+		① What ? (Target Type) 	...... Super-Command, 	*Required*, *abbreviated* conventionally										
+		② How to do ? 			...... Sub-Command,	 	*Required*
+		③ About target 			...... Target Name, 	*Required*
+		④ With options 			...... Options, 		*Optional*,	on Super/Sub commands
+
+			a. An option started with short(-) or full(--) might optinally have `value` 
+				ex) --name Yoseph or -n Yoseph
+
+				*NOTE* : Short-hand flag(-) has been currently *deprecated*
+
+			b. All options started with short(-) could be combined with *ONE*
+				ex) -d -t -i	=> combined with, -dit
+
+		⑤ With arguments 		...... Arguments,		*Optional*,	on the Target
+
+			The method to specify is the same as "④ options".									
+
+	Example:
+
+		> docker container run penguin					-> docker ① ② ③
+		> docker container run -d penguin --mode=1 		-> docker ① ② ④ ③ ⑤
+		
+			-d 			run in background.
+			--mode=1 	run in mode 1
+
+		> docker run penguin							-> docker ② ③, ① is abbreviated conventionally
+
+
+02. Which version of "docker" ?
+
+	> docker -v
+	Docker version 24.0.7, build afdd53b
+
+	> docker version -h
+	
+	> docker version
+	Client:
+	...
+
+	Server: Docker Desktop 4.26.0 (130397)
+ 	...
+
+
+03. Where is the "docker" command ?
+
+	> which docker
+	C:\Program Files\Docker\Docker\resources\bin\docker
+
+
+04. Display "docker" command help 																	<--- ***
+
+	> docker --help
+	> docker -h 																					(short-hand)
+
+	* Display help of the specified command:
+
+	> docker command --help 		(long)
+	> docker command -h 			(short)	<--- *Deprecated*										(short-hand)
+
+	Examples : List containers
+
+		> docker ps --help
+		> docker ps -h 																				(short-hand)
+
+
+05. Grep docker help page
+
+	> docker 2>&1 | grep -in <searchKeyword>
+
+	Examples :
+
+		> docker
+		...
+
+		> docker 2>&1 | grep -in container
+		...
+
+
+06. Display system-wide information
+
+	> docker info --help
+	Usage:  docker info [OPTIONS]
+
+	Display system-wide information 							<--- ***
+
+	*Aliases:
+
+		> docker system info
+		> docker info
+
+	Examples :
+
+		> docker system info
+		> docker info
+		...
+		> docker info -f json
+
+
+07. Manage docker																					<--- ***
+
+	> docker system --help
+	Usage:  docker system COMMAND
+
+	Manage Docker
+
+	Commands:
+	df          Show docker disk usage 																<--- ***
+	events      Get real time events from the server 												<--- ***
+	info        Display system-wide information
+	prune       Remove unused data
+
+	Examples :
+
+		> docker system info 						// Display system-wide information
+		> docker info 								// Display system-wide information
+
+		> docker system df 							// Show docker disk usage
+		> docker system events 						// Get real time events from the server
+
+	> docker info --help
+	Usage:  docker info [OPTIONS]
+
+	Display system-wide information
+
+	Aliases:
+		
+		> docker system info
+		> docker info
+
+
+08. Search docker hub for images																	<--- ***
+
+	> docker search --help
+	Usage:  docker search [OPTIONS] TERM
+
+	Search Docker Hub for images
+
+	Examples : Search all images related to the "apache" from Docker Hub
+
+		> docker search apache
+		NAME                             DESCRIPTION                                       STARS     OFFICIAL   AUTOMATED
+		*httpd*                          The Apache HTTP Server Project                    4621      [OK]
+		tomcat                           Apache Tomcat is an open source implementati…     3616      [OK]
+		...
+
+		> docker search --limit 5 apache 		// Max number of search results == 5
+		NAME        DESCRIPTION                                      STARS     OFFICIAL   AUTOMATED
+		httpd       The Apache HTTP Server Project                   4621      [OK]
+		tomcat      Apache Tomcat is an open source implementati…    3618      [OK]
+		maven       Apache Maven is a software project managemen…    1542      [OK]
+		zookeeper   Apache ZooKeeper is an open-source server wh…    1401      [OK]
+		cassandra   Apache Cassandra is an open-source distribut…    1509      [OK]
+		...
+
+
+09. Examples : create a new container of apache HTTP web server 									<--- ***
+
+	○ Command 	: run
+	○ Image 	: httpd
+	○ Container : apa0001ex1
+	○ Option 	: -d 						(Run In Background)
+	○ Option 	: --name <containerName> 	(Set Container Name)
+
+	// Create and run a new container from an image.
+
+	> docker run --name apa0001ex1 -d httpd															<--- ***
+	Unable to find image 'httpd:latest' locally
+	latest: Pulling from library/httpd
+	...
+	Digest: sha256:bb56126969beb90ea4912aa6353be3b419b05ca89e1c12621d4457cd5c02ed16
+	Status: Downloaded newer image for httpd:latest
+	994b0f0f9f179eb4d0f3ab7d1dad6035c5893fde8c5e4b03b57d1c839564c5b5 								(*container id*)
+
+	// List containers
+	> docker ps 					
+	CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS         PORTS     NAMES
+	186c590d5c7f   httpd     "httpd-foreground"   2 minutes ago   Up 2 minutes   80/tcp    apa000ex1																<--- ***
+
+	// Show all containers (default shows just running)
+	> docker ps -a 																					<--- ***
+	CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          PORTS     NAMES
+	186c590d5c7f   httpd     "httpd-foreground"   48 seconds ago   Up 47 seconds   80/tcp    apa000ex1
+
+	// List images
+	> docker images																					<--- ***
+	REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+	httpd        latest    e499c02ff073   8 weeks ago   174MB
+
+
+10. Docker commands with container
+
+	> docker container -h
+	Usage:  docker container COMMAND
+
+	Manage containers 																				<--- ***
+
+	Commands (Sub-commands) :
+		attach      Attach local standard input, output, and error streams to a running container
+		commit      Create a new image from a container's changes
+		cp          Copy files/folders between a container and the local filesystem
+		create      Create a new container 															<--- ***: CREATE
+		diff        Inspect changes to files or directories on a container's filesystem
+		exec        Execute a command in a running container 										<--- ***: refer to 12-13
+		export      Export a container's filesystem as a tar archive
+		inspect     Display detailed information on one or more containers 							<--- ***: SELECT
+		kill        Kill one or more running containers
+		logs        Fetch the logs of a container
+		ls          List containers 																<--- ***: LIST UP
+		pause       Pause all processes within one or more containers
+		port        List port mappings or a specific mapping for the container 						<--- ***: PORT MAPPINGS
+		prune       Remove all stopped containers
+		rename      Rename a container
+		restart     Restart one or more containers 													<--- ***: STOP > START
+		rm          Remove one or more containers 													<--- ***: REMOVE
+		run         Create and run a new container from an image 									<--- ***: DOWNLOAD IMAGE > CREATE > START
+		start       Start one or more stopped containers 											<--- ***: START
+		stats       Display a live stream of container(s) resource usage statistics
+		stop        Stop one or more running containers 											<--- ***: STOP
+		top         Display the running processes of a container
+		unpause     Unpause all processes within one or more containers
+		update      Update configuration of one or more containers
+		wait        Block until one or more containers stop, then print their exit codes
+
+		Run 'docker container COMMAND --help' for more information on a command.
+
+	-------------------------
+	09-1. List containers
+	-------------------------
+
+		> docker container ls -h
+		Usage:  docker container ls [OPTIONS]
+
+		List containers 																			<--- ***
+
+		*Aliases:
+
+			> docker container ls
+			> docker container list
+			> docker container ps
+			> docker ps																				<--- ***
+
+		Examples:
+
+			> docker container ls
+			> docker container list
+			> docker container ps
+			> docker container ps -a
+			> docker ps
+			> docker ps -a 					// Show all containers (default shows just running)
+			*CONTAINER ID*   *IMAGE*     COMMAND              CREATED         *STATUS*         *PORTS*     *NAMES*
+			994b0f0f9f17     httpd      "httpd-foreground"   5 minutes ago   Up 5 minutes      80/tcp    apache001ex1
+
+	-------------------------
+	09-2. Create a new container
+	-------------------------
+
+		> docker container create --help
+		Usage:  docker container create [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+		Create a new container 																		<--- ***
+
+		*Aliases:
+
+			> docker container create
+			> docker create																			<--- ***
+
+		Examples1 (Without Port Mappings) 
+		
+			> docker container create --name <newContainerName> <imageName or imageId>				<--- ***
+			> docker create --name <newContainerName> <imageName or imageId>						<--- ***
+
+			> docker search nginx 												// Search Docker Hub for images
+			NAME                               DESCRIPTION                                      STARS     OFFICIAL   AUTOMATED
+			nginx                              Official build of Nginx.                         19378     [OK]
+			...
+
+			> docker pull nginx 												// Download an image from a registry
+			Using default tag: latest
+			latest: Pulling from library/nginx
+			...
+			Digest: sha256:10d1f5b58f74683ad34eb29287e07dab1e90f10af243f151bb50aa5dbb4d62ee
+			Status: Downloaded newer image for nginx:latest
+			docker.io/library/nginx:latest
+
+			> docker scout quickview nginx 										// Quick overview of an image
+			...
+
+			> docker image ls
+			> docker image list
+			> docker images
+			*REPOSITORY*   *TAG*       *IMAGE ID*       CREATED       SIZE
+			nginx        latest     a6bd71f48f68     3 weeks ago   187MB
+
+			// Create a new container
+			> docker create --name nginx0001ex1 nginx 												<--- ***
+			> docker container create --name nginx0001ex1 nginx										<--- ***
+			21466b8605d3be12f33282121f1b6869110f9ebeef3dcdc9deeae1b90af7b8e4
+
+			> docker ps
+			*CONTAINER ID*   *IMAGE*     COMMAND   CREATED   *STATUS*    *PORTS*     *NAMES*
+
+			> docker ps -a																			<--- ***
+			CONTAINER ID   IMAGE     COMMAND                   CREATED              STATUS    PORTS     NAMES
+			21466b8605d3   nginx     "/docker-entrypoint.…"   About a minute ago   Created             nginx0001ex1
+
+		Examples2 (With Port Mappings)
+
+			> docker container create --name <newContainerName> -p <portMapping> <image Name or Id>	<--- ***
+			> docker create --name <newContainerName> -p <portMapping> <image Name or Id>			<--- ***
+
+			> docker images
+			REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+			nginx        latest    a6bd71f48f68   3 weeks ago   187MB
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS         PORTS     NAMES
+			21466b8605d3   nginx     "/docker-entrypoint.…"   26 minutes ago   Up 5 minutes   80/tcp    nginx0001ex1
+
+			> docker container create --name nginx0001ex2 -p 8081:80 nginx							<--- ***
+			> docker create --name nginx0001ex2 -p 8081:80 nginx									<--- ***
+			4ed10bfc526d5d90ae997f4bf596ae3ce5a07c93a908cdecb7fd80d3de30e4f2
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED         *STATUS*       *PORTS*     NAMES
+			4ed10bfc526d   nginx     "/docker-entrypoint.…"   2 minutes ago    Created                  nginx0001ex2
+			21466b8605d3   nginx     "/docker-entrypoint.…"   30 minutes ago   Up 9 minutes   80/tcp    nginx0001ex1
+
+			> docker container start nginx0001ex2													<--- ***
+			> docker start 4ed10bfc526d																<--- ***
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS          *PORTS*                  NAMES
+			4ed10bfc526d   nginx     "/docker-entrypoint.…"   4 minutes ago    Up 4 seconds    0.0.0.0:8081->80/tcp   nginx0001ex2
+			21466b8605d3   nginx     "/docker-entrypoint.…"   32 minutes ago   Up 10 minutes   80/tcp                 nginx0001ex1
+
+			// Port test with telnet
+			> telnet localhost 8080 																<--- ***
+
+			// Connect with text-based web browser, "curl"
+			> curl http://localhost:8080															<--- ***
+
+	-------------------------
+	09-3. Start a created container(s)
+	-------------------------
+
+		> docker container start --help
+		Usage:  docker container start [OPTIONS] CONTAINER [CONTAINER...]
+
+		Start one or more stopped containers 														<--- ***
+
+		*Aliases:
+
+			> docker container start
+			> docker start																			<--- ***
+
+		Examples:
+		
+			> docker container start <containerId or containerName>									<--- ***
+			> docker start <containerId or containerName>											<--- ***
+
+			> docker ps -a
+			*CONTAINER ID*   *IMAGE*     COMMAND                 CREATED              *STATUS*    *PORTS*     *NAMES*
+			21466b8605d3     nginx     "/docker-entrypoint.…"   About a minute ago   Created                nginx0001ex1
+
+			> docker container start nginx0001ex1													<--- ***
+			> docker start 21466b8605d3
+			> docker start 21
+			214
+
+			> docker ps
+			> docker ps -a																			<--- ***
+			*CONTAINER ID*   *IMAGE*     COMMAND                 CREATED          *STATUS*       *PORTS*     *NAMES*
+			21466b8605d3     nginx     "/docker-entrypoint.…"   7 minutes ago    Up 12 seconds   80/tcp    nginx0001ex1
+
+	-------------------------
+	09-4. Stop the specified container(s)
+	-------------------------
+
+		> docker container stop --help
+		Usage:  docker container stop [OPTIONS] CONTAINER [CONTAINER...]
+
+		Stop one or more running containers 														<--- ***
+
+		*Aliases:
+			
+			> docker container stop
+			> docker stop																			<--- ***
+
+		Examples:
+
+			> docker container stop <containerId or containerName> 									<--- ***
+			> docker stop <containerId or containerName> 											<--- ***
+
+			> docker ps
+			> docker ps -a
+			*CONTAINER ID*   *IMAGE*     COMMAND                 CREATED          *STATUS*       *PORTS*     *NAMES*
+			21466b8605d3     nginx     "/docker-entrypoint.…"   7 minutes ago    Up 12 seconds   80/tcp    nginx0001ex1
+
+			> docker container stop nginx0001ex1 													<--- ***
+			> docker stop 21466b8605d3																<--- ***
+			> docker stop 214																		<--- ***
+			214
+
+			> docker ps
+			*CONTAINER ID*   *IMAGE*     COMMAND   CREATED   *STATUS*    *PORTS*     *NAMES*
+
+			> docker ps -a																			<--- ***
+			*CONTAINER ID*   *IMAGE*     COMMAND                 CREATED          *STATUS*       *PORTS*     *NAMES*
+			21466b8605d3     nginx     "/docker-entrypoint.…"   13 minutes ago   Exited (0) 5 seconds ago   nginx0001ex1
+
+	-------------------------
+	09-5. Restart the specified container(s)
+	-------------------------
+
+		> docker container restart --help
+		Usage:  docker container restart [OPTIONS] CONTAINER [CONTAINER...]
+
+		Restart one or more containers 																<--- ***
+
+		*Aliases:
+
+			> docker container restart
+			> docker restart																		<--- ***
+
+		Examples:
+
+			> docker container restart <containerId or containerName>								<--- ***
+			> docker restart <containerId or containerName>											<--- ***
+
+			> docker ps
+			CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+			> docker ps -a
+			*CONTAINER ID*   *IMAGE*     COMMAND                 CREATED          *STATUS*       *PORTS*     *NAMES*
+			21466b8605d3     nginx     "/docker-entrypoint.…"   13 minutes ago   Exited (0) 5 seconds ago   nginx0001ex1
+
+			> docker container restart nginx0001ex1													<--- ***
+			> docker restart 21466b8605d3															<--- ***
+			> docker restart 214																	<--- ***
+			214
+
+			> docker ps
+			> docker ps -a																			<--- ***
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS         PORTS     NAMES
+			21466b8605d3   nginx     "/docker-entrypoint.…"   16 minutes ago   Up 4 seconds   80/tcp    nginx0001ex1
+
+	-------------------------
+	09-6. List port mappings for the container
+	-------------------------
+
+		> docker container port --help
+		Usage:  docker container port CONTAINER [PRIVATE_PORT[/PROTO]]
+
+		List port mappings or a specific mapping for the container 									<--- ***
+
+		*Aliases:
+
+			> docker container port
+			> docker port																			<--- ***
+
+		Examples:
+
+			> docker container port <containerId or containerName>									<--- ***
+			> docker port <containerId or containerName>											<--- ***
+
+			* NOTE1: If the container already stopped, port mappings disappeared. (***)
+			* NOTE2: When creating a new container without port mappings, port mappings also disappeared. (***)
+
+			> docker start nginx0001ex1																<--- ***
+			> docker start 21466b8605d3																<--- ***
+
+			> docker ps
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS         *PORTS*                  NAMES
+			4ed10bfc526d   nginx     "/docker-entrypoint.…"   4 minutes ago    Up 4 seconds    0.0.0.0:8081->80/tcp   nginx0001ex2
+			21466b8605d3   nginx     "/docker-entrypoint.…"   32 minutes ago   Up 10 minutes   80/tcp                 nginx0001ex1
+
+			> docker container port nginx0001ex1													<--- ***
+			> docker port 21466b8605d3																<--- ***
+			> docker port 214																		<--- ***
+			80/tcp -> 0.0.0.0:8081
+
+	-------------------------
+	09-7. Display detailed information on one or more containers
+	-------------------------
+
+		> docker container inspect --help
+		Usage:  docker container inspect [OPTIONS] CONTAINER [CONTAINER...]
+
+		Display detailed information on one or more containers										<--- ***
+
+		Example:
+
+			> docker container inspect <containerId or containerName>								<--- ***
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS                     PORTS                  NAMES
+			70120863b91d   nginx     "/docker-entrypoint.…"   19 minutes ago   Up 5 minutes               0.0.0.0:8080->80/tcp   nginx000ex2
+			a90fdb297809   nginx     "/docker-entrypoint.…"   20 minutes ago   Exited (0) 7 minutes ago                          nginx_container
+			186c590d5c7f   httpd     "httpd-foreground"        34 minutes ago   Exited (0) 7 minutes ago                          apa000ex1
+
+			> docker container inspect 70120863b91d													<--- ***
+			> docker container inspect apa000ex1 nginx_container									<--- ***
+			...
+
+
+		> docker inspect --help
+		Usage:  docker inspect [OPTIONS] NAME|ID [NAME|ID...]
+
+		Return low-level information on Docker objects												<--- ***
+
+		Example:
+
+			> docker inspect <dockerObjectName or dockerObjectId>									<--- ***
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS                      PORTS                  NAMES
+			70120863b91d   nginx     "/docker-entrypoint.…"   43 minutes ago   Up 29 minutes               0.0.0.0:8080->80/tcp   nginx000ex2
+			a90fdb297809   nginx     "/docker-entrypoint.…"   44 minutes ago   Exited (0) 31 minutes ago                          nginx_container
+			186c590d5c7f   httpd     "httpd-foreground"        58 minutes ago   Exited (0) 31 minutes ago                          apa000ex1
+
+			// specify a containerId
+			> docker inspect 70120863b91d															<--- ***
+			// specify a containerName
+			> docker inspect nginx000ex2															<--- ***
+			...
+
+	-------------------------
+	09-8. Remove container(s)
+	-------------------------
+
+		> docker container rm -h
+		Usage:  docker container rm [OPTIONS] CONTAINER [CONTAINER...]
+
+		Remove one or more containers 																<--- ***
+
+		*Aliases:
+
+			> docker container rm
+			> docker container remove
+			> docker rm																				<--- ***
+
+		Examples: 
+
+			> docker container rm <containerId or containerName>									<--- ***
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          *STATUS*         PORTS                  NAMES
+			4ed10bfc526d   nginx     "/docker-entrypoint.…"   8 minutes ago    Up 4 minutes    0.0.0.0:8081->80/tcp   nginx0001ex2
+			21466b8605d3   nginx     "/docker-entrypoint.…"   36 minutes ago   Up 14 minutes   80/tcp                 nginx0001ex1
+
+			> docker contaier rm nginx0001ex2														<--- ***
+			> docker container remove nginx0001ex2													<--- ***
+			> docker remove 21466b8605d3															<--- ***
+			> docker remove 214																		<--- ***
+			> docker rm nginx0001ex1 nginx0001ex2													<--- ***
+			> docker rm 4ed10bfc526d 21466b8605d3													<--- ***
+			Error response from daemon: You cannot remove a "RUNNING" container 					<--- ***
+			4ed10bfc526d5d90ae997f4bf596ae3ce5a07c93a908cdecb7fd80d3de30e4f2.
+			*STOP* the container before attempting removal or force remove
+
+			Error response from daemon: You cannot remove a "RUNNING" container						<--- ***
+			21466b8605d3be12f33282121f1b6869110f9ebeef3dcdc9deeae1b90af7b8e4.
+			*STOP* the container before attempting removal or force remove
+
+			> docker stop nginx0001ex2 nginx0001ex1													<--- ***
+			nginx0001ex2
+			nginx0001ex1
+
+			> docker stop 4ed10bfc526d 21466b8605d3													<--- ***
+			4ed10bfc526d
+			21466b8605d3
+
+			> docker contaier rm nginx0001ex2														<--- ***
+			> docker container remove nginx0001ex2													<--- ***
+			> docker remove 21466b8605d3															<--- ***
+			> docker remove 214																		<--- ***
+			> docker rm nginx0001ex1 nginx0001ex2													<--- ***
+			> docker rm 4ed10bfc526d 21466b8605d3													<--- ***
+			4ed10bfc526d
+			21466b8605d3
+
+			> docker ps -a																			<--- ***
+			CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+	-------------------------
+	09-9. Create and Run a New Container Simultaneouly 
+	-------------------------
+
+		> docker contaienr run --help
+		Usage:  docker container run [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+		Create and run a new container from an image
+
+		*Aliases:
+
+			> docker container run
+			> docker run																		<--- ***
+
+		Examples: 
+
+			> docker container run --name <newContainerName>
+				-p <portMapping1> -p <portMapping2> -p ... 										// Port Mappings
+				-d 																				// Run in background
+				<imageName or imageId>															<--- ***
+
+			> docker image ls
+			> docker images
+			REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+			nginx        latest    a6bd71f48f68   3 weeks ago   187MB
+			httpd        latest    e499c02ff073   8 weeks ago   174MB
+
+			> docker image remove nginx																<--- ***
+			> dicker image rm e499c02ff073															<--- ***
+			> docker rmi nginx httpd																<--- ***
+			> docker images																			<--- ***
+			REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+
+			> docker search httpd
+			NAME              DESCRIPTION                          STARS     OFFICIAL   AUTOMATED
+			httpd             The Apache HTTP Server Project       4621      [OK]
+			...
+
+			> docker search nginx
+			NAME              DESCRIPTION                          STARS     OFFICIAL   AUTOMATED
+			nginx             Official build of Nginx.             19378     [OK]
+			...
+
+			> docker container run --name apa0001ex1 -p 8080:80 -d httpd							<--- ***
+			Unable to find image 'httpd:latest' locally
+			latest: Pulling from library/httpd
+			...
+
+			> docker run --name nginx0001ex1 -p 8080:80 -d nginx									<--- ***
+			Unable to find image 'httpd:latest' locally
+			latest: Pulling from library/httpd
+			...
+			docker: Error response from daemon: driver failed programming external connectivity 
+			on endpoint nginx000ex1 (7c699f481d43146a92c3c43d55432f1833d66e1fb3bae869f2a07bf50a18b218): 
+				Bind for 0.0.0.0:8080 failed: port is already allocated.							// Host Port Conflict (***)
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED              STATUS         *PORTS*                NAMES
+			4fb3231070b0   nginx     "/docker-entrypoint.…"   About a minute ago   Created         *** Port Conflict ***  nginx000ex1
+			77c4aa4d6816   httpd     "httpd-foreground"        2 minutes ago        Up 2 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+			> docker start nginx000ex1																<--- ***
+			Error response from daemon: driver failed programming external connectivity 
+			on endpoint nginx000ex1 (4cc7ef09734aeaad5dbbfc7e001d7d72b51ad013800b843e47a2a20c9e1ed6c0): 
+				Bind for 0.0.0.0:8080 failed: port is already allocated								// Host Port Conflict (***)
+				Error: failed to start containers: nginx000ex1
+
+			// The container whose port mapping conflict should be removed.	(***)
+			> docker rm nginx001ex1																	<--- ***
+			nginx001ex1
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS         PORTS                  NAMES
+			77c4aa4d6816   httpd     "httpd-foreground"   4 minutes ago   Up 4 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+			// Host Port cannot be shared. 	(***)
+			> docker run --name nginx0001ex1 -p 8081:80 -d nginx									<--- ***
+
+			> docker ps -a																			<--- ***
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS          PORTS                  NAMES
+			0ee638be05e6   httpd     "httpd-foreground"        3 seconds ago    Up 2 seconds    0.0.0.0:8081->80/tcp   apa0001ex1
+			87766794625a   nginx     "/docker-entrypoint.…"   17 seconds ago   Up 16 seconds    0.0.0.0:8080->80/tcp   nginx0001ex1
+
+			> docker images																			<--- ***
+			REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+			nginx        latest    a6bd71f48f68   3 weeks ago   187MB
+			httpd        latest    e499c02ff073   8 weeks ago   174MB
+
+			> telnet localhost 8080
+			> telnet localhost 8081
+
+			> curl http://localhost:8080
+			> curl http://localhost:8081
+
+
+11. Docker commands about image(s)
+
+	> docker image --help
+	Usage:  docker image COMMAND 
+
+	Manage images 																					<--- ***
+
+	Commands:
+	build       Build an image from a Dockerfile
+	history     Show the history of an image 														<--- ***: SELECT
+	import      Import the contents from a tarball to create a filesystem image
+	inspect     Display detailed information on one or more images 									<--- ***: SELECT
+	load        Load an image from a tar archive or STDIN
+	ls          List images 																		<--- ***: LIST
+	prune       Remove unused images
+	pull        Download an image from a registry 													<--- ***: CREATE
+	push        Upload an image to a registry
+	rm          Remove one or more images 															<--- ***: REMOVE
+	save        Save one or more images to a tar archive (streamed to STDOUT by default)
+	tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+
+	-----------------------
+	10-1. Download an Image
+	-----------------------
+
+		> docker image pull -h
+		Usage:  docker image pull [OPTIONS] NAME[:TAG|@DIGEST]
+
+		Download an image from a registry 															<--- ***: Registry == Docker Hub
+			
+		*Aliases:
+
+			> docker image pull
+			> docker pull
+
+		Examples:
+
+			> docker image pull <foundImageNameFromDockerHub>:<tag == version>						<--- ***
+			> docker pull <foundImageNameFromDockerHub>:<tag == version>							<--- ***
+
+			> docker search apache nginx 				// XX : *NOT* allowed to search several images once
+
+			> docker search apache --limit 5
+			> docker search nginx --limit 5
+
+			> docker image pull httpd nginx 			// XX : *NOT* allowed to pull several images once
+
+			> docker image pull httpd																<--- ***
+			> docker pull httpd																		<--- ***
+			...
+
+			> docker image pull nginx																<--- ***
+			> docker pull nginx																		<--- ***
+			...
+
+	-----------------------
+	10-2. List All Images
+	-----------------------
+
+		> docker image ls -h									
+		Usage:  docker image ls [OPTIONS] [REPOSITORY[:TAG]]
+
+		List images 																				<--- ***
+
+		*Aliases:
+
+			> docker image ls
+			> docker image list
+			> docker images																			<--- ***
+
+		Examples :
+
+			> docker image ls																		<--- ***
+			> docker image list																		<--- ***
+			> docker images																			<--- ***
+			*REPOSITORY*   *TAG*       *IMAGE ID*       CREATED       	SIZE
+			nginx         latest      a6bd71f48f68    3 weeks ago   	187MB
+			httpd         latest      e499c02ff073    8 weeks ago   	174MB
+
+	-----------------------
+	10-3. Display an Image
+	-----------------------
+
+		> docker image history -h
+		Usage:  docker image history [OPTIONS] IMAGE
+
+		Show the history of an image 																<--- ***
+
+		*Aliases:
+		
+			> docker image history
+			> docker history																		<--- ***
+
+		Examples:
+
+			> docker image history <imageId or imageName>											<--- ***
+			> docker history <imageId or imageName>													<--- ***
+
+			> docker images
+			REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+			nginx        latest    a6bd71f48f68   3 weeks ago   187MB
+			httpd        latest    e499c02ff073   8 weeks ago   174MB
+
+			> docker history httpd nginx 				// XX, *NOT* allowed to history several images at once
+
+			> docker image history nginx															<--- ***
+			> docker history nginx																	<--- ***
+			IMAGE          CREATED       CREATED BY                                       SIZE      COMMENT
+			a6bd71f48f68   3 weeks ago   /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
+			...
+
+			> docker image history e499c02ff073														<--- ***
+			> docker history e499c02ff073															<--- ***
+			IMAGE          CREATED       CREATED BY                                       SIZE      COMMENT
+			e499c02ff073   8 weeks ago   CMD ["httpd-foreground"]                         0B        buildkit.dockerfile.v0
+			...
+
+	-----------------------
+	10-4. Inspect Image(s)
+	-----------------------
+
+		> docker image inspect --help
+		Usage:  docker image inspect [OPTIONS] IMAGE [IMAGE...]
+
+		Display detailed information on one or more images 											<--- ***
+
+		Examples:
+		
+			> docker image inspect <imageId1 or imageName1> <imageId2 or imageName2> ...			<--- ***
+
+			> docker images
+			REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+			nginx        latest    a6bd71f48f68   3 weeks ago   187MB
+			httpd        latest    e499c02ff073   8 weeks ago   174MB
+
+			> docker image inspect nginx e499c02ff073												<--- ***
+			[
+				{
+					"Id": "sha256:e499c02ff073eab9c792e71c456c07489a4bf4ee86c6db754bbd16304858d064",
+					"RepoTags": [
+			...
+
+	-----------------------
+	10-5. Remove Image(s)
+	-----------------------
+
+		> docker image rm --help
+		Usage:  docker image rm [OPTIONS] IMAGE [IMAGE...]
+
+		Remove one or more images 																	<--- ***
+
+		*Aliases:
+
+			> docker image rm
+			> docker image remove
+			> docker rmi																			<--- ***
+
+		Examples : 
+
+			*NOTE*: 																				<--- ***
+				To remove pulled image(s), firstly there is no container(s) using the specified image(s).
+				If attemping to remove the specified images with container(s) using them,
+				the following error occurred:
+
+					Error response from daemon: *CONFLICT* : unable to delete a6ca7b52a415 (cannot be forced) - 
+					image is *BEING* used by *RUNNING* CONTAINER 63ace5241bbd
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS         PORTS     NAMES
+			63ace5241bbd   httpd     "httpd-foreground"   3 minutes ago   Up 3 minutes   80/tcp    apa0001ex1
+
+			> docker image rm 63ace5241bbd															<--- ***
+			Error response from daemon: conflict: unable to delete 63ace5241bbd (cannot be forced) - 
+				image is *BEING* used by running container 63ace5241bbd
+
+			> docker image rm --force 63ace5241bbd													<--- ***
+			Error response from daemon: conflict: unable to delete 63ace5241bbd (cannot be forced) - 
+				image is *BEING* used by running container 63ace5241bbd
+
+			> docker container stop apa0001ex1														<--- ***
+			> docker stop apa0001ex1
+			apa0001ex1
+
+			> docker container remove apa0001ex1													<--- ***
+			> docker container rm apa0001ex1
+			> docker rm apa0001ex1
+			apa0001ex1
+
+			> docker images
+			REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+			httpd        latest    e499c02ff073   8 weeks ago   174MB
+
+			> docker image remove httpd																<--- ***
+			> docker image rm a6ca7b52a415															<--- ***
+			> docker rmi a6																			<--- ***
+			Untagged: httpd:latest
+			...
+
+			> docker images
+			REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+
+
+12. Create an apache web server container with port forwarding to connect it.
+
+	> docker run --name apa0001ex1 -d -p 8080:80 httpd												<--- ***
+	> docker ps -a																					<--- ***
+	> docker images																					<--- ***
+
+	> curl http://localhost:8080
+	<html><body><h1>It works!</h1></body></html>
+	
+	> docker container port <containerName or containerId>											<--- ***
+	> docker port <containerName or containerId>													<--- ***
+
+	> docker port apa000ex1
+	80/tcp -> 0.0.0.0:8080
+
+	> docker container stop <containerName or containerId>											<--- ***
+	> docker stop <containerName or containerId>													<--- ***
+
+	> docker stop apa000ex1
+	apa000ex1
+
+	> docker ps -a
+
+	> docker container inspect <containerName or containerId>										<--- ***
+	> docker Inspect <containerName or containerId>													<--- ***
+
+	> docker container stop <containerName or containerId>											<--- ***
+	> docker stop <containerName or containerId>													<--- ***
+
+	docker inspect apa000ex1
+	apa000ex1
+
+	> docker ps -a
+
+	> docker container remove <containerName or containerId>										<--- ***										
+	> docker container rm <containerName or containerId>											<--- ***
+	> docker rm <containerName or containerId>														<--- ***
+
+	> docker rm apa000ex11
+	apa000ex1
+
+	> docker ps -a
+
+	> docker images																					<--- ***
+
+	> docker image remove <imageName or imageId>													<--- ***
+	> docker image rm <imageName or imageId>														<--- ***
+	> docker rmi <imageName or imageId>																<--- ***
+
+	>docker rmi httpd
+	Untagged: httpd:latest
+	...
+
+	> docker images
+	REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+
+
+13. Create a container with interactive shell.
+
+	> docker search ubuntu																			
+	NAME                DESCRIPTION                                      STARS     OFFICIAL   AUTOMATED
+	ubuntu              Ubuntu is a Debian-based Linux operating sys…    16684     [OK]
+	...
+
+	// -it options : go into interactive shell when creating/running the container.
+	// Due to the absence of "-d" option (run in background), run in foreground.
+	> docker run --name ubuntu0001ex1 -it ubuntu													<--- ***
+	root@e0e30607f150:/#																			<--- ***
+	root@e0e30607f150:/# uname -a
+	Linux e0e30607f150 5.15.133.1-microsoft-standard-WSL2 #1 SMP Thu Oct 5 21:02:42 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
+
+	> docker ps -a 										// in the other terminal
+	CONTAINER ID   IMAGE     COMMAND       CREATED              *STATUS*            PORTS     NAMES
+	0138c0ae0f6a   ubuntu    "/bin/bash"   About a minute ago   Up About a minute             ubuntu0001ex1
+
+	root@e0e30607f150:/# exit																		<--- ***
+
+	> docker ps -a
+	CONTAINER ID   IMAGE     COMMAND       CREATED              *STATUS*                       PORTS     NAMES
+	e0e30607f150   ubuntu    "/bin/bash"   About a minute ago   Exited (127) 5 seconds ago             ubuntu0001ex1
+
+	> docker start ubuntu0001ex1																	<--- ***
+	ubuntu0001ex1
+
+	> docker ps -a
+	CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS         PORTS     NAMES
+	0138c0ae0f6a   ubuntu    "/bin/bash"   6 minutes ago   Up 3 minutes             ubuntu0001ex1
+
+	// go into interactive shell of the specified container *AGAIN*									<--- ***: Important
+	> docker exec -it ubuntu0001ex1 /bin/bash														<--- ***
+	root@0138c0ae0f6a:/#																			<--- ***
+
+	root@0138c0ae0f6a:/# exit
+
+	> docker stop ubuntu0001ex1
+	ubuntu0001ex1
+
+	> docker rm ubuntu0001ex1
+	ubuntu0001ex1
+
+	> docker ps -a
+	CONTAINER ID   IMAGE     COMMAND       CREATED              STATUS                       PORTS     NAMES
+
+	> docker images
+	*REPOSITORY* TAG       IMAGE ID       CREATED      SIZE
+	ubuntu       latest    174c8c134b2a   8 days ago   77.9MB
+
+	> docker rmi ubuntu
+
+	> docker system df
+	TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+	Images          0         0         0B        0B
+	Containers      0         0         0B        0B
+	Local Volumes   0         0         0B        0B
+	Build Cache     0         0         0B        0B
+
+
+14. Execute a command in a running container
+
+	> docker exec --help
+	Usage:  docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
+
+	Execute a command in a running container 														<--- ***
+
+	*Aliases:
+
+		> docker container exec
+		> docker exec																				<--- ***
+
+	Examples1:
+
+		// -d (--detach) 		: Run in background													<--- ***
+		// -t (--tty) 			: Allocate a pseudo-TTY												<--- ***
+		// -i (--interactive) 	: Keep STDIN open even if not attached								<--- ***
+
+		> docker exec -it <containerName or containerId> commandTobeExecuted						<--- ***
+
+		------------------------------------------
+
+		// Without "-it" options.
+		> docker run --name ubuntu000ex1 -d ubuntu													<--- ***
+		...
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND       CREATED          *STATUS*                   PORTS     NAMES
+		78d012586025   ubuntu    "/bin/bash"   56 seconds ago   Exited (0) 2 seconds ago             ubuntu000ex1
+
+		// The container could *NOT* be run,
+		// due to the absence of "-it" options when creating container.								<--- ***
+		> docker start ubuntu000ex1																	<--- ***
+		ubuntu000ex1
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND       CREATED          *STATUS*                   PORTS     NAMES
+		78d012586025   ubuntu    "/bin/bash"   56 seconds ago   Exited (0) 2 seconds ago             ubuntu000ex1
+
+		// XX, *NO* go into interactive shell without "-it" options.
+		> docker exec ubuntu000ex1 /bin/bash
+
+		> docker rm ubuntu000ex1
+		ubuntu000ex1
+
+		// With "-dit" options to interact with created container.									<--- ***
+		> docker run --name ubuntu000ex1 -dit ubuntu												<--- ***
+		...
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND       CREATED         *STATUS*       PORTS     NAMES
+		c7214d97e5a4   ubuntu    "/bin/bash"   3 seconds ago   Up 2 seconds             ubuntu000ex1
+
+		// OK, with required "-it" options.
+		> docker exec -it ubuntu000ex1 /bin/bash 													<--- ***
+		root@b39b70da2959:/#	
+		root@b39b70da2959:/# exit
+
+		> docker exec ubuntu000ex1 date
+		Sun Dec 17 05:43:00 UTC 2023																<--- ***
+
+	Examples2:
+
+		// With "-it" options
+		> docker run --name nginx000ex1 -d nginx													<--- ***
+		...
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND                   CREATED              *STATUS*           PORTS     NAMES
+		76011c9cc59a   nginx     "/docker-entrypoint.…"   About a minute ago   Up About a minute   80/tcp    nginx000ex1
+
+		// With "-it" options																		<--- ***
+		> docker exec -it nginx000ex1 date															<--- ***
+		Thu Dec 21 03:26:50 UTC 2023
+
+		> docker exec -it nginx000ex1 /bin/bash														<--- ***
+		root@76011c9cc59a:/#
+		root@76011c9cc59a:/# exit
+
+		// Without "-it" options																	<--- ***
+		> docker exec nginx000ex1 date
+		Thu Dec 21 03:29:43 UTC 2023
+
+		// XX, *NOT* go into interactive shell,
+		// because that when creating the container without "-it" options.							<--- ***
+		> docker exec nginx000ex1 /bin/bash															<--- ***
+
+
+15. Create & run multiple apache web servers with same port
+
+	* NOTE: Between docker containers created with "same" image, 
+			a. "port" could be *shared* (== *same*)													<--- ***
+			    Because that the container port already is specified and *immutable*.				<--- ***
+			b. "IP address" could *NOT* be shared (== should be *different*)						<--- ***
+
+	(1) Create three apache web server containers with each port mappings							<--- ***
+
+		> docker run
+			--name <newContainerName>
+			-d
+			-p <portMapping1> -p <portMapping2> -p ...
+			imageNameOrId																			<--- ***
+
+		> docker run --name apa000ex1 -d -p 8080:80 httpd											<--- ***
+		6eb9f0958284235bc045b314c855367251316f45202983b665adb9d186fdd6f8
+
+		> docker run --name apa000ex2 -d -p 8081:80 httpd											<--- ***
+		812edab29f69264c074cac84f537a488b1547d968d39a28cc2aecaffb0de875d
+
+		> docker run --name apa000ex3 -d -p 8082:80 httpd											<--- ***
+		e5eae216a91f3f9bbcc4fd27f7be283166605c8ccd82de4d64845483fad31bd6
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          *PORTS*                  NAMES
+		e5eae216a91f   httpd     "httpd-foreground"   3 seconds ago    Up 2 seconds    0.0.0.0:8082->80/tcp   apa000ex3
+		812edab29f69   httpd     "httpd-foreground"   14 seconds ago   Up 13 seconds   0.0.0.0:8081->80/tcp   apa000ex2
+		6eb9f0958284   httpd     "httpd-foreground"   32 seconds ago   Up 31 seconds   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker port apa000ex1
+		80/tcp -> 0.0.0.0:8080
+
+		> docker port apa000ex2
+		80/tcp -> 0.0.0.0:8081
+
+		> docker port apa000ex3
+		80/tcp -> 0.0.0.0:8082
+
+		// XX, *CANNOT* specify several containers at one
+		> docker port apa000ex1 apa0001ex2
+		Error: invalid port (apa0001ex2): strconv.ParseUint: parsing "apa0001ex2": invalid syntax
+
+		> telnet localhost 8080																		<--- ***
+		> telnet localhost 8081																		<--- ***								
+		> telnet localhost 8082																		<--- ***
+
+		> curl http://localhost:8080																<--- ***
+		<html><body><h1>It works!</h1></body></html>
+
+		> curl http://localhost:8081																<--- ***
+		<html><body><h1>It works!</h1></body></html>
+		
+		> curl http://localhost:8082																<--- ***
+		<html><body><h1>It works!</h1></body></html>
+		
+	(2) Create an container with several port mappnigs between host and container.					<--- ***
+
+		> docker run
+			--name <newContainerName>
+			-d
+			-p <portMapping1> -p <portMapping2> -p ...
+			imageNameOrId																			<--- ***
+
+		> docker run --name apa000ex1 -p 8080:80 -p 8081:80 -p 8082:80 -d httpd						<--- ***
+		14156ff7ef16db99e6e1e3f442c891de701f380e81bb23fbab139193ff800c8a
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS         **PORTS**                                                          NAMES
+		14156ff7ef16   httpd     "httpd-foreground"   3 seconds ago   Up 2 seconds   0.0.0.0:8080->80/tcp, 0.0.0.0:8081->80/tcp, 0.0.0.0:8082->80/tcp   apa000ex1
+
+		> docker port apa000ex1
+		80/tcp -> 0.0.0.0:8080
+		80/tcp -> 0.0.0.0:8081
+		80/tcp -> 0.0.0.0:8082
+
+		> telnet localhost 8080
+		> telnet localhost 8081
+		> telnet localhost 8082
+
+		> curl http://localhost:8080
+		<html><body><h1>It works!</h1></body></html>
+
+		> curl http://localhost:8081
+		<html><body><h1>It works!</h1></body></html>
+
+		> curl http://localhost:8082
+		<html><body><h1>It works!</h1></body></html>
+
+
+16. Display a live stream of container(s) resource usage statistics
+
+	> docker stats -h
+	Usage:  docker stats [OPTIONS] [CONTAINER...]
+
+	Display a live stream of container(s) resource usage statistics									<--- ***
+
+	*Aliases:
+
+		> docker container stats
+		> docker stats																				<--- ***
+
+	Example:
+
+		// In command prompt on windows,
+		// multi-line command should use "^" symbol to continue current line.						<--- ***
+
+		// With "-dit" options.
+		> docker run --name mysql000ex1 ^
+		-dit ^
+		-p 8001:3306 -p 8002:33060 ^
+		-e MYSQL_ROOT_PASSWORD=myrootpass ^
+		-e MYSQL_DATABASE=wordpressdb ^
+		-e MYSQL_USER=myuser ^
+		-e MYSQL_PASSWORD=mypass mysql ^
+		--character-set-server=utf8mb4 ^
+		--collation-server=utf8mb4_unicode_ci ^
+		--default-authentication-plugin=mysql_native_password										<--- ***
+
+		7a4fd0deabd2723821bcdc179dfb618bc4c2c1ba972dcda8c563a00a4951dffc
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND                   CREATED          *STATUS*          *PORTS*                                                              NAMES
+		ccc277f375a8   mysql     "docker-entrypoint.s…"   4 seconds ago    Up 3 seconds     0.0.0.0:8001->3306/tcp, 0.0.0.0:8002->33060/tcp                    mysql000ex1
+		14156ff7ef16   httpd     "httpd-foreground"      16 minutes ago    Up 16 minutes    0.0.0.0:8080->80/tcp, 0.0.0.0:8081->80/tcp, 0.0.0.0:8082->80/tcp   apa000ex1
+
+		> docker container port mysql000ex1
+		> docker port mysql0001ex1
+		3306/tcp -> 0.0.0.0:8001
+		33060/tcp -> 0.0.0.0:8002
+
+		* Configure connection with MySQL Shell using port mappings.								<--- ***
+
+		> docker container stats mysql000ex1														<--- ***
+		> docker stats ccc277f375a8																	<--- ***
+		CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+		ccc277f375a8   mysql000ex1   0.00%     0B / 0B             0.00%     0B / 0B   0B / 0B     0
+
+		> docker stop mysql000ex1
+		mysql000ex1
+
+		> docker rm mysql000ex1
+		mysql000ex1
+
+		> docker ps -a
+		CONTAINER ID   NAME           CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+
+
+17. When creating a container, specify a specific version of an image
+
+	Syntax1: imageName:version																		<--- ***
+	Syntax2: imageName:latest																		<--- ***: Latest vesion
+	Syntax3: imageName 																				<--- ***: default, Latest version
+	Syntax4: imageName:Major 																		<--- ***: `Minor` version become latest
+
+	Example:
+	
+		> docker run --name apa000ex1 -d -p 8080:80 httpd:2.2
+		Unable to find image 'httpd:2.2' locally
+		2.2: Pulling from library/httpd
+		...
+		Digest: sha256:9784d70c8ea466fabd52b0bc8cde84980324f9612380d22fbad2151df9a430eb
+		Status: Downloaded newer image for httpd:2.2
+		ae4ce5398c68d707bfe84f45a8328b360a9de57769d644ea78059a0220d57640
+
+		> docker ps -a
+		CONTAINER ID   *IMAGE*     COMMAND              CREATED          STATUS          PORTS                  NAMES
+		ae4ce5398c68   *httpd:2.2* "httpd-foreground"   22 seconds ago   Up 21 seconds   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+		httpd        2.2       e06c3dbbfe23   5 years ago   171MB 									<--- ***
+
+		> docker history httpd																		
+		Error response from daemon: No such image: httpd:latest										<--- ***
+
+		> docker history httpd:2.2
+		IMAGE          CREATED       CREATED BY                                       SIZE      COMMENT
+		e06c3dbbfe23   5 years ago   /bin/sh -c #(nop)  CMD ["httpd-foreground"]      0B
+		...
+
+
+18. Remove the specified version of image
+
+	Syntax1: imageName:version
+	Syntax2: imageName:latest			<--- ***: Latest vesion
+	Syntax3: imageName 					<--- ***: default, Latest version
+	Syntax4: imageName:Major 			<--- ***: `Minor` version become latest
+
+	Example:
+
+		> docker ps -a
+		CONTAINER ID   *IMAGE*     COMMAND              CREATED         STATUS         PORTS                  NAMES
+		e4f782927257   httpd:2.2   "httpd-foreground"   4 minutes ago   Up 3 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+		httpd        2.2       e4f782927257   5 years ago   171MB 									<--- ***
+
+		> docker image remove httpd:2.2
+		> docker iamge rm httpd:2.2
+		> docker rmi httpd:2.2
+		Error response from daemon: conflict: 														<--- ***
+			unable to remove repository reference "httpd:2.2" (must force) - 
+			container e4f782927257 is using its referenced image e06c3dbbfe23
+
+		// Attempting remove the specified image forcely referenced by current containers.
+		> docker rmi -f httpd:2.2		// with --force or -f option								<--- ***
+		Untagged: httpd:2.2
+		Untagged: httpd@sha256:9784d70c8ea466fabd52b0bc8cde84980324f9612380d22fbad2151df9a430eb
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+		*<none>*   *<none>*    e06c3dbbfe23   5 years ago   171MB									<--- ***
+
+		> docker rmi -f e06c3dbbfe23																<--- ***
+		Error response from daemon: 
+			conflict: unable to delete e06c3dbbfe23 (cannot be forced) - 
+			image is being used by running container e4f782927257
+
+		> docker stop apa000ex1
+		apa000ex1
+
+		> docker rm apa000ex1
+		apa000ex1
+
+		> docker ps -a																				<--- ***
+		CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+		> docker rmi e06c3dbbfe23																	<--- ***
+		...
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+
+
+19. Manage docker network
+
+	* NOTE: Docket network are necessary to connect/disconnect between containers.	(***)
+
+	> docker network -h
+	Usage:  docker network COMMAND
+
+	Manage networks																					<--- ***
+
+	Commands:
+		connect     Connect a container to a network
+		create      Create a network 																<--- ***: CREATE
+		disconnect  Disconnect a container from a network 											<--- ***: UPDATE
+		inspect     Display detailed information on one or more networks 							<--- ***: SELECT
+		ls          List networks 																	<--- ***: LIST
+		prune       Remove all unused networks														<--- ***: DELETE
+		rm          Remove one or more networks 													<--- ***: DELETE
+
+	Run 'docker network COMMAND --help' for more information on a command.
+
+	-----------------------
+	19-1. List all virtual networks
+	-----------------------
+
+		> docker network ls --help
+		Usage:  docker network ls [OPTIONS]
+
+		List networks 																				<--- ***
+
+		Aliases:
+		
+			> docker network list
+			> docker network ls
+
+		Example: List up default docker virtual networks
+
+			> docker network list
+			> docker network ls																		<--- ***
+			NETWORK ID     NAME      DRIVER    SCOPE
+			e77f8bd00a1c   bridge    bridge    local
+			f9ed0c1b8e8b   host      host      local
+			bb57b5597efd   none      null      local
+
+	-----------------------
+	19-2. Create a network
+	-----------------------
+
+		> docker network create --help
+		Usage:  docker network create [OPTIONS] NETWORK
+
+		Create a network 																			<--- ***
+
+		Example:
+
+			> docker network create newNetwork
+			8f7034673cac3fa9dd84336513811449979680eaf26d375d22131deaa3d49637
+
+			> docker network ls
+			NETWORK ID     NAME         DRIVER    SCOPE
+			9d2d73d5d5e9   bridge       bridge    local
+			f9ed0c1b8e8b   host         host      local
+			afa8ff97763c   newNetwork   bridge    local												<--- ***
+			bb57b5597efd   none         null      local
+
+	-----------------------
+	19-3. Inspect a network
+	-----------------------
+
+		> docker network inspect --help
+		Usage:  docker network inspect [OPTIONS] NETWORK [NETWORK...]
+
+		Display detailed information on one or more networks 										<--- ***
+
+		*Aliases:
+
+			> docker inspect																		<--- ***
+
+		Example: > docker network inspect <networkName or networkId>
+
+			> docker network ls
+			NETWORK ID     NAME         DRIVER    SCOPE
+			9d2d73d5d5e9   bridge       bridge    local
+			f9ed0c1b8e8b   host         host      local
+			afa8ff97763c   newNetwork   bridge    local												<--- ***
+			bb57b5597efd   none         null      local
+
+			> docker network inspect newNetwork
+			> docker network inspect afa8ff97763c
+			> docker inspect afa
+			[
+				{
+					"Name": "wordpress000net1",														<--- ***: network name
+					"Id": "8f7034673cac3fa9dd84336513811449979680eaf26d375d22131deaa3d49637", 		<--- ***: network id
+					"Created": "2023-12-17T07:13:57.504907817Z",
+					"Scope": "local", 																<--- ***
+					"Driver": "bridge",
+					"EnableIPv6": false, 															<--- ***
+					"IPAM": {
+						"Driver": "default",
+						"Options": {},
+						"Config": [																	<--- ***
+							{
+								"Subnet": "172.18.0.0/16", 											<--- ***
+								"Gateway": "172.18.0.1" 											<--- ***
+							}
+						]
+					},
+					"Internal": false,
+					"Attachable": false,
+					"Ingress": false,
+					"ConfigFrom": {
+						"Network": ""
+					},
+					"ConfigOnly": false,
+					"Containers": {},																<--- ***: connected containers
+					"Options": {},
+					"Labels": {}
+				}
+			]
+
+	-----------------------
+	19-4. Remove a network
+	-----------------------
+
+		> docker network rm --help																	<--- ***
+		> docker network prune --help																<--- ***
+
+		Usage:  docker network rm NETWORK [NETWORK...]
+
+		Remove one or more networks																	<--- ***
+
+		*Aliases:
+				
+			> docker network remove
+			> docker network rm																		<--- ***
+
+		Options:
+			-f, --force   Do not error if the network does not exist
+
+		Example:
+		
+			> docker network remove <networkName or networkId>										<--- ***
+			> docker network rm <networkName or networkId>											<--- ***
+
+			> docker network ls
+			NETWORK ID     NAME         DRIVER    SCOPE
+			9d2d73d5d5e9   bridge       bridge    local
+			f9ed0c1b8e8b   host         host      local
+			afa8ff97763c   newNetwork   bridge    local												<--- ***
+			bb57b5597efd   none         null      local
+	
+			> docker network rm newNetwork															<--- ***
+			newNetwork
+
+			> docker network remove afa8ff97763c													<--- ***
+			afa8ff97763c
+
+			> docker network ls
+			NETWORK ID     NAME      DRIVER    SCOPE
+			e77f8bd00a1c   bridge    bridge    local
+			f9ed0c1b8e8b   host      host      local
+			bb57b5597efd   none      null      local
+
+	-----------------------
+	19-5. Remove all unused networks
+	-----------------------
+
+		> docker network prune --help																<--- ***
+
+		Usage:  docker network prune [OPTIONS]
+
+		Remove all unused networks 																	<--- ***
+
+		Options:
+			--filter filter   Provide filter values (e.g. "until=<timestamp>")
+		-f, --force           Do not prompt for confirmation
+
+		Example:
+
+			> docker network create mynetwork1
+			3be57f3688508ce1b7548587c71c531b6b130713a6457fa5efce56fc63263d30						<--- ***: network id
+
+			> docker network create mynetwork2
+			c27fcf06fa1a6c915ece2e6ce83fcf9ce7cf25c884d52abe7be9433db595cf72						<--- ***: network id
+
+			> docker network ls 
+			NETWORK ID     NAME         DRIVER    SCOPE
+			9d2d73d5d5e9   bridge       bridge    local
+			f9ed0c1b8e8b   host         host      local
+			3be57f368850   mynetwork1   bridge    local												<--- ***: *NOT* used currently
+			c27fcf06fa1a   mynetwork2   bridge    local												<--- ***: *NOT* used currently
+			bb57b5597efd   none         null      local
+
+			> docker network prune
+			WARNING! This will remove all custom networks not used by at least one container.
+			Are you sure you want to continue? [y/N] y
+			Deleted Networks: 																		<--- ***
+			mynetwork1																				<--- ***
+			mynetwork1																				<--- ***
+
+			> docker network ls
+			NETWORK ID     NAME      DRIVER    SCOPE
+			9d2d73d5d5e9   bridge    bridge    local
+			f9ed0c1b8e8b   host      host      local
+			bb57b5597efd   none      null      local
+
+	-----------------------
+	19-6. Connect a container to a network 	
+	-----------------------
+
+		> docker network connect --help
+		Usage:  docker network connect [OPTIONS] ① NETWORK ② CONTAINER
+
+		Connect a container to a network 															<--- ***
+
+		Example: connect the specified container to the specified network							<--- ***
+
+			> docker run --name mycontainer1 -dit ubuntu
+			> docker run --name mycontainer2 -dit ubuntu
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
+			e7971b2a785c   ubuntu    "/bin/bash"   9 seconds ago    Up 9 seconds              mycontainer2
+			c6c6115a7cbe   ubuntu    "/bin/bash"   14 seconds ago   Up 14 seconds             mycontainer1
+
+			> docker network create mynetwork
+			0efb321fada83b78e7ed727506c34142d06539fe296bdf1e06e831bb01896419						<--- ***: network id
+
+			> docker network ls
+			NETWORK ID     NAME        DRIVER    SCOPE
+			9d2d73d5d5e9   bridge      bridge    local
+			f9ed0c1b8e8b   host        host      local
+			0efb321fada8   mynetwork   bridge    local												<--- ***
+			bb57b5597efd   none        null      local
+
+			// To connect "mycontainer1" container with "mynetwork" network
+			> docker network connect mynetwork mycontainer1											<--- ***
+
+			// To connect "mycontainer2" container with "mynetwork" network
+			> docker network connect mynetwork mycontainer2											<--- ***
+
+			> docker container inspect mycontainer1
+			
+				Please refer to "../temp/docker_container_inspect_mycontainer1.txt
+
+			> docker network inspect mynetwork
+			
+				Please refer to "../temp/docker_network_inspect_mynetwork.txt
+
+			> docker exec -it mycontainer1 /bin/bash
+
+				$ unminimize					// Restore Ubuntu package manager
+
+				$ apt upgrade -y
+				$ apt update -y
+				$ apt-get install -y net-tools telnet vim sudo netcat openssh-server				<--- ***
+
+				$ ifconfig | grep inet
+				inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+				inet 172.18.0.2  netmask 255.255.0.0  broadcast 172.18.255.255
+				inet 127.0.0.1  netmask 255.0.0.0
+
+				$ service ssh status
+ 				* sshd is not running
+
+				$ service ssh start																	<--- ***																	<--- ***
+ 				* Starting OpenBSD Secure Shell server sshd                   						[ OK ]
+				
+				$ ps -ef | grep ssh
+				root      5294     1  0 06:58 ?        00:00:00 sshd: /usr/sbin/sshd [listener] 0 of 10-100 startups
+				root      5297     9  0 06:58 pts/1    00:00:00 grep --color=auto ssh
+
+				$ nc -l -p 8080
+
+			> docker exec -it mycontainer2 /bin/bash
+			
+				$ unminimize					// Restore Ubuntu package manager
+
+				$ apt upgrade -y
+				$ apt update -y
+				$ apt-get install -y net-tools telnet vim sudo netcat openssh-server
+
+				$ ifconfig | grep inet
+				inet 172.17.0.3  netmask 255.255.0.0  broadcast 172.17.255.255
+				inet 172.18.0.3  netmask 255.255.0.0  broadcast 172.18.255.255
+				inet 127.0.0.1  netmask 255.0.0.0
+
+				$ service ssh status
+ 				* sshd is not running
+
+				$ service ssh start																	<--- ***
+ 				* Starting OpenBSD Secure Shell server sshd                   						[ OK ]
+				
+				$ ps -ef | grep ssh
+				root      5294     1  0 06:58 ?        00:00:00 sshd: /usr/sbin/sshd [listener] 0 of 10-100 startups
+				root      5297     9  0 06:58 pts/1    00:00:00 grep --color=auto ssh
+
+				$ telnet 172.17.02 22
+				Trying 172.21.0.3...
+				Connected to 172.21.03.
+				Escape character is '^]'.
+				SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.5
+
+	-----------------------
+	19-7. Disconnect a container from a network
+	-----------------------
+
+		> docker network disconnect --help
+		Usage:  docker network disconnect [OPTIONS] ① NETWORK ② CONTAINER
+
+		Disconnect a container from a network														<--- ***
+
+		Example: disconnect the specified container from the specified network
+
+			> docker network ls
+			NETWORK ID     NAME        DRIVER    SCOPE
+			9d2d73d5d5e9   bridge      bridge    local
+			f9ed0c1b8e8b   host        host      local
+			0efb321fada8   mynetwork   bridge    local												<--- ***
+			bb57b5597efd   none        null      local
+
+			> docker network inspect mynetwork														<--- ***
+
+				Please refer to "../temp/docker_network_inspect_mynetwork.txt"
+
+			> docker ps -a
+			*CONTAINER ID* IMAGE     COMMAND       CREATED             STATUS             PORTS    *NAMES*
+			e7971b2a785c   ubuntu    "/bin/bash"   About an hour ago   Up About an hour             mycontainer2
+			c6c6115a7cbe   ubuntu    "/bin/bash"   About an hour ago   Up About an hour             mycontainer1
+
+			> docker network disconnect mynetwork mycontainer1
+			> docker network disconnect mynetwork mycontainer2
+
+			> docker network inspect mynetwork														<--- ***
+			[
+				{
+					"Name": "mynetwork",
+					"Id": "0efb321fada83b78e7ed727506c34142d06539fe296bdf1e06e831bb01896419",
+					"Created": "2023-12-21T06:02:01.144529437Z",
+					"Scope": "local",
+					"Driver": "bridge",
+					"EnableIPv6": false,
+					"IPAM": {
+						"Driver": "default",
+						"Options": {},
+						"Config": [
+							{
+								"Subnet": "172.21.0.0/16",
+								"Gateway": "172.21.0.1"
+							}
+						]
+					},
+					"Internal": false,
+					"Attachable": false,
+					"Ingress": false,
+					"ConfigFrom": {
+						"Network": ""
+					},
+					"ConfigOnly": false,
+					"Containers": {},																<--- ***: empty
+					"Options": {},
+					"Labels": {}
+				}
+			]
+			
+
+20. Creating MySQL container, WordPress container and connection between two containers
+
+	■ Step1. Create a new docker virtual network
+
+		> docker network create mywork 																<--- ***
+
+		> docker network ls
+		NETWORK ID     NAME        DRIVER    SCOPE
+		9d2d73d5d5e9   bridge      bridge    local
+		f9ed0c1b8e8b   host        host      local
+		a3d89f17377b   mynetwork   bridge    local													<--- ***
+		bb57b5597efd   none        null      local
+
+		> docker network inspect mynetwork
+		[
+			{
+				"Name": "mynetwork",
+				"Id": "a3d89f17377b7b9c1539f100f4d7001d66a5d250c19c419863797a5a4af285cb",
+				"Created": "2023-12-21T07:21:44.943889371Z",
+				"Scope": "local",
+				"Driver": "bridge",
+				"EnableIPv6": false,
+				"IPAM": {
+					"Driver": "default",
+					"Options": {},
+					"Config": [
+						{
+							"Subnet": "172.22.0.0/16",
+							"Gateway": "172.22.0.1"
+						}
+					]
+				},
+				"Internal": false,
+				"Attachable": false,
+				"Ingress": false,
+				"ConfigFrom": {
+					"Network": ""
+				},
+				"ConfigOnly": false,
+				"Containers": {},
+				"Options": {},
+				"Labels": {}
+			}
+		]
+
+	■ Step2. Create a MySQL container
+
+		Syntax:
+
+			> docker run ^
+			--name mysqlcontainer ^
+			-dit ^
+			--net=mynetwork ^ 																		<--- ***: specify network to connect
+			-p 8001:3306 ^
+			-p 8002:33060 ^
+			-e MYSQL_ROOT_PASSWORD=myrootpass ^
+			-e NYSQL_DATABASE=mysqldb ^
+			-e MYSQL_USER=myuser ^
+			-e MYSQL_PASSWORD=mypass ^
+			mysql ^																					<--- ***: til here, container created normally		
+			--character-set-server=utf8mb4 ^
+			--collation-server=utf8mb4_unicode_ci ^
+			--default-authentication-plugin=mysql_native_password
+
+		Example:
+
+			> docker run ^																			<--- ***
+			More? --name mysqlcontainer ^
+			More? -dit ^
+			More? --net=mynetwork ^
+			More? -p 8001:3306 ^
+			More? -p 8002:33060 ^
+			More? -e MYSQL_ROOT_PASSWORD=myrootpass ^
+			More? -e MYSQL_DATABASE=mysqldb ^
+			More? -e MYSQL_USER=myuser ^
+			More? -e MYSQL_PASSWORD=mypass ^
+			More? mysql ^
+			More? --character-set-server=utf8mb4 ^
+			More? --collation-server=utf8mb4_unicode_ci ^
+			More? --default-authentication-plugin=mysql_native_password
+
+			> docker ps -a
+			CONTAINER ID   IMAGE     COMMAND                   CREATED          STATUS          PORTS                                             NAMES
+			741e9680a74c   mysql     "docker-entrypoint.s…"   53 seconds ago   Up 52 seconds   0.0.0.0:8001->3306/tcp, 0.0.0.0:8002->33060/tcp   mysqlcontainer
+
+			> docker container inspect mysqlcontainer												<--- ***
+			> docker inspect 741e9680a74c															<--- ***
+			
+				Please refer to "../temp/docker_container_inspect_mysqlcontainer.txt" file
+
+	■ Step3. Create a WordPress container
+
+		Syntax:
+
+			> docker run ^
+				--name wordpresscontainer ^
+				-dit ^
+				--net=mynetwork ^																	<--- ***: specify network to be connected
+				-p 8003:80 ^
+				-e WORDPRESS_DB_HOST=mysqlcontainer ^												<--- ***: specify MySQL container to use
+				-e WORDPRESS_DB_NAME=mysqldb ^														<--- ***: specify MySQL database name to use
+				-e WORDPRESS_DB_USER=myuser ^														<--- ***: specify MySQL user name to use
+				-e WORDPRESS_DB_PASSWORD=mypass ^													<--- ***: specify MySQL user password to use
+				wordpress
+
+		Example:
+
+			> docker run ^
+				More? --name wordpresscontainer ^
+				More? -dit ^
+				More? --net=mynetwork ^
+				More? -p 8003:80 ^
+				More? -e WORDPRESS_DB_HOST=mysqlcontainer ^
+				More? -e WORDPRESS_DB_NAME=mysqldb ^
+				More? -e WORDPRESS_DB_USER=myuser ^
+				More? -e WORDPRESS_DB_PASSWORD=mypass ^
+				More? wordpress																		<--- ***
+
+			> docker ps -a
+			CONTAINER ID   IMAGE       COMMAND                   CREATED          STATUS          PORTS                                             NAMES
+			68f9e4efe144   wordpress   "docker-entrypoint.s…"   13 seconds ago   Up 11 seconds   0.0.0.0:8003->80/tcp                              wordpresscontainer
+			741e9680a74c   mysql       "docker-entrypoint.s…"   16 minutes ago   Up 16 minutes   0.0.0.0:8001->3306/tcp, 0.0.0.0:8002->33060/tcp   mysqlcontainer
+
+			> docker network ls
+			NETWORK ID     NAME        DRIVER    SCOPE
+			9d2d73d5d5e9   bridge      bridge    local
+			f9ed0c1b8e8b   host        host      local
+			a3d89f17377b   mynetwork   bridge    local												<--- ***
+			bb57b5597efd   none        null      local
+
+			> docker network inspect mynetwork														<--- ***
+			> docker network inspect a3d89f17377b													<--- ***
+			> docker network inspect a3d															<--- ***
+			[
+				{
+					"Name": "mynetwork",															<--- ***: network name
+					"Id": "a3d89f17377b7b9c1539f100f4d7001d66a5d250c19c419863797a5a4af285cb",		<--- ***: network id
+					"Created": "2023-12-21T07:21:44.943889371Z",
+					"Scope": "local",
+					"Driver": "bridge",
+					"EnableIPv6": false,
+					"IPAM": {
+						"Driver": "default",
+						"Options": {},
+						"Config": [
+							{
+								"Subnet": "172.22.0.0/16",
+								"Gateway": "172.22.0.1"
+							}
+						]
+					},
+					"Internal": false,
+					"Attachable": false,
+					"Ingress": false,
+					"ConfigFrom": {
+						"Network": ""
+					},
+					"ConfigOnly": false,
+					"Containers": {																	<--- ***
+						"68f9e4efe1440e8218859363c7cc8f3dc14bc65218757085495817abd42f192f": {		<--- ***: container id
+							"Name": "wordpresscontainer",											<--- ***: container name
+							"EndpointID": "4b30b01fab2d7feaf2e7e610adae8c41a2482553e19fefca16cf9fe2fd2e0749",
+							"MacAddress": "02:42:ac:16:00:03",
+							"IPv4Address": "172.22.0.3/16",											<--- ***: ip address
+							"IPv6Address": ""
+						},
+						"741e9680a74cf58a58bafa94c10c560c6676a1545da10939147ebf46f26d0b03": {		<--- ***: container id
+							"Name": "mysqlcontainer",												<--- ***: container name
+							"EndpointID": "928a8cf469ef99e87f7e751bcd8270c5826b5fbc4275aace4f701706b03fb802",
+							"MacAddress": "02:42:ac:16:00:02",
+							"IPv4Address": "172.22.0.2/16",											<--- ***: ip address
+							"IPv6Address": ""
+						}
+					},
+					"Options": {},
+					"Labels": {}
+				}
+			]
+
+	■ Step4. Test to connect to WordPress web site with web browser
+
+		http://localhost:8003		// port 8003: forwarding port to wordpress 80 port set in step 3
+
+	■ Step5. Release all resources
+
+		> docker ps -a
+		CONTAINER ID   IMAGE       COMMAND                   CREATED          STATUS          PORTS                                             NAMES
+		68f9e4efe144   wordpress   "docker-entrypoint.s…"   4 minutes ago    Up 4 minutes    0.0.0.0:8003->80/tcp                              wordpresscontainer
+		741e9680a74c   mysql       "docker-entrypoint.s…"   20 minutes ago   Up 20 minutes   0.0.0.0:8001->3306/tcp, 0.0.0.0:8002->33060/tcp   mysqlcontainer
+
+		> docker container stop mysqlcontainer
+		> docker stop mysqlcontainer																<--- ***
+
+		> docker container stop wordpresscontainer
+		> docker stop wordpresscontainer															<--- ***
+
+		// Disconnect the container from the network
+		> docker network disconnect mynetwork wordpresscontainer									<--- ***
+		> docker network disconnect mynetwork mysqlcontainer										<--- ***
+
+		> docker network inspect mynetwork
+		[
+			{
+				"Name": "mynetwork",
+				"Id": "a3d89f17377b7b9c1539f100f4d7001d66a5d250c19c419863797a5a4af285cb",
+				"Created": "2023-12-21T07:21:44.943889371Z",
+				"Scope": "local",
+				"Driver": "bridge",
+				"EnableIPv6": false,
+				"IPAM": {
+					"Driver": "default",
+					"Options": {},
+					"Config": [
+						{
+							"Subnet": "172.22.0.0/16",
+							"Gateway": "172.22.0.1"
+						}
+					]
+				},
+				"Internal": false,
+				"Attachable": false,
+				"Ingress": false,
+				"ConfigFrom": {
+					"Network": ""
+				},
+				"ConfigOnly": false,
+				"Containers": {},																	<--- ***
+				"Options": {},
+				"Labels": {}
+			}
+		]
+
+		> docker container rm wordpresscontainer
+		> docker rm wordpresscontainer																<--- ***
+
+		> docker container rm mysqlcontainer
+		> docker rm mysqlcontainer																	<--- ***
+
+		> docker images
+		> docker rmi wordpress																		<--- ***
+		> docker rmi mysql																			<--- ***
+
+		> docker network ls
+		NETWORK ID     NAME        DRIVER    SCOPE
+		9d2d73d5d5e9   bridge      bridge    local
+		f9ed0c1b8e8b   host        host      local
+		a3d89f17377b   mynetwork   bridge    local													<--- ***
+		bb57b5597efd   none        null      local
+
+		> docker network rm mynetwork																<--- ***
+		mynetwork
+
+		> docker network ls
+		NETWORK ID     NAME      DRIVER    SCOPE
+		9d2d73d5d5e9   bridge    bridge    local
+		f9ed0c1b8e8b   host      host      local
+		bb57b5597efd   none      null      local
+
+
+21. Manage Docker Volumes
+
+	> docker volume --help
+	Usage:  docker volume COMMAND
+
+	Manage volumes 																					<--- ***
+
+	Commands:
+		create      Create a volume 																<--- ***: CREATE
+		inspect     Display detailed information on one or more volumes 							<--- ***: SELECT
+		ls          List volumes 																	<--- ***: LIST
+		prune       Remove unused local volumes 													<--- ***: DELETE
+		rm          Remove one or more volumes 														<--- ***: DELETE
+
+	Run 'docker volume COMMAND --help' for more information on a command.
+	
+	-----------------------
+	21-1. List all volumes
+	-----------------------
+
+		> docker volume ls --help
+		Usage:  docker volume ls [OPTIONS]
+
+		List volumes 																				<--- ***
+
+		*Aliases:
+
+			> docker volume list
+			> docker volume ls																			<--- ***
+
+		Example:
+		
+			> docker system df																		<--- ***
+			TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+			Images          0         0         0B        0B
+			Containers      0         0         0B        0B
+			Local Volumes   8         0         860.5MB   860.5MB (100%) 							<--- ***: used space in current
+			Build Cache     0         0         0B        0B
+
+			> docker volume list
+			> docker volume ls																		<--- ***
+			DRIVER    VOLUME NAME
+			local     5bee8d1f7bd5195f7e792e914f0fdec9b1f197282645c4d431f61214da8ae5ba
+			local     5dfe000d80a1ed52bc64dda5a112fbc70900bd2e65bf04c2bdd08f5373ffe89e
+			local     94e3e9ceef58d5dfef87160b9019638cc21ce576155ddc5cd3cc9fdf5c1aafa2
+			local     2394fb369ac9f5a7861ff4d5bb17502b88c1101b527b0f0f2a366cd604ced862
+			local     7389f6d3e7d61fb2cb050617343fb729038df4907224cd8e392ee06125af40d4
+			local     c8b400286d4db37723e43710e2e1060b7419d26f17018b7d94d0d1831d9f7b11
+			local     d22bbc2958b09c063ff1fd7ac65406d82f8a0093b0e8e0cff19af78ebe5fd48e
+			local     d81aa648dac4379d8c7f8d4bc70b166d19f23ca5ca58aaac66c1f743ad0177a8
+		
+	-----------------------
+	21-2. Create a volume
+	-----------------------
+
+		> docker volume create --help
+		Usage:  docker volume create [OPTIONS] [VOLUME]
+
+		Create a volume 																			<--- ***
+
+		Example:
+
+			> docker volume create myvolume															<--- ***
+			myvolume
+
+			> docker volume ls
+			DRIVER    VOLUME NAME
+			local     myvolume																		<--- ***
+
+			> docker volume inspect myvolume 														<--- ***
+			> docker inspect myvolume 																<--- ***
+			[
+				{
+					"CreatedAt": "2023-12-21T08:12:23Z",
+					"Driver": "local",
+					"Labels": null,
+					"Mountpoint": "/var/lib/docker/volumes/myvolume/_data",							<--- ***
+					"Name": "myvolume",																<--- ***: volume name
+					"Options": null,
+					"Scope": "local"
+				}
+			]
+
+	-----------------------
+	21-3. Inspect a volume
+	-----------------------
+
+		> docker volume inspect --help
+		Usage:  docker volume inspect [OPTIONS] VOLUME [VOLUME...]
+
+		Display detailed information on one or more volumes 										<--- ***
+
+		Example:
+
+			> docker volums ls
+			DRIVER    VOLUME NAME
+			local     myvolume																		<--- ***
+
+			> docker volume inspect <volumeName>													<--- ***
+			> docker volume inspect myvolume
+			[
+				{
+					"CreatedAt": "2023-12-21T08:12:23Z",
+					"Driver": "local",
+					"Labels": null,
+					"Mountpoint": "/var/lib/docker/volumes/myvolume/_data",							<--- ***
+					"Name": "myvolume",																<--- ***: volume name
+					"Options": null,
+					"Scope": "local"
+				}
+			]
+
+			> docker inspect <volumeName>															<---- ***
+			> docker inspect volume1
+			[
+				{
+					"CreatedAt": "2023-12-21T08:12:23Z",
+					"Driver": "local",
+					"Labels": null,
+					"Mountpoint": "/var/lib/docker/volumes/myvolume/_data",							<--- ***
+					"Name": "myvolume",																<--- ***: volume name
+					"Options": null,
+					"Scope": "local"
+				}
+			]
+
+	-----------------------
+	21-4. Remove a volume
+	-----------------------
+
+		> docker volume rm --help
+		Usage:  docker volume rm [OPTIONS] VOLUME [VOLUME...]
+
+		Remove one or more volumes.
+		You *CANNOT* remove a volume that is *IN USE* by a container.
+
+		*Aliases:
+		
+			> docker volume rm
+			> docker volume remove
+
+		Examples:
+
+			> docker volume ls
+			DRIVER    VOLUME NAME
+			...
+			local     volume1 												<--- ***
+
+			> docker volume rm <volumeName>
+			> docker volume rm volume1
+			volume1
+
+			> docker volume ls
+			DRIVER    VOLUME NAME
+			...
+		
+	
+22. Restore Ubuntu package manager																	<--- ***
+
+	> unminimize 																					<--- ***
+
+		This system has been minimized by removing packages and content that are
+		not required on a system that users do not log into.
+
+		This script restores content and packages that are found on a default
+		Ubuntu server system in order to make this system more suitable for
+		interactive use.
+
+		Reinstallation of packages may fail due to changes to the system
+		configuration, the presence of third-party packages, or for other
+		reasons.
+
+		This operation may take some time.
+
+		Would you like to continue? [y/N] y																<--- ***
+
+	> apt upgrade -y
+	> apt update -y
+
+	> apt-get install -y net-tools telnet vim sudo netcat openssh-server							<--- ***
+
+	> service ssh status
+	* sshd is not running
+
+	> service ssh start																				<--- ***																	<--- ***
+	* Starting OpenBSD Secure Shell server sshd                   							[ OK ]
+	
+	> ps -ef | grep ssh
+	root      5294     1  0 06:58 ?        00:00:00 sshd: /usr/sbin/sshd [listener] 0 of 10-100 startups
+	root      5297     9  0 06:58 pts/1    00:00:00 grep --color=auto ssh
+
+
+23. Copy files : [ host ] -> [ container ] or [ container ] -> [ host ]								<--- ***
+
+	■ Syntax:
+
+		① > docker cp <sourcePathInHost> <containerName/containerId:targetPath>				   	   <--- ***
+		② > docker cp <containerName/containerId:sourcePath> <targetPathInHost>				   	   <--- ***
+
+	■ Docker Command:
+
+		> docker container cp --help
+		
+		Usage:  docker container cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-						<--- ***
+				docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH									<--- ***
+
+		Aliases:
+
+			> docker container cp
+			> docker cp																				<--- ***
+
+		Copy files/folders between a "container" and the "local filesystem"
+
+		Use '-' as the source to read a tar archive from stdin
+		and extract it to a directory destination in a container.
+
+		Use '-' as the destination to stream a tar archive of a
+		container source to stdout.
+		------------------------------------
+		stdin에서 tar 아카이브를 읽고
+		이를 컨테이너의 디렉터리 대상으로 추출하려면, 소스로 '-'를 사용합니다.
+
+		컨테이너 소스의 tar 아카이브를 stdout으로 스트리밍하려면,
+		'-'를 대상으로 사용하세요.
+
+	■ Example1: copy index.html from [ host ] to [ docker container ]
+
+		> docker run --name apa000ex1 -d -p 8080:80 httpd
+		...
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS         PORTS                  NAMES
+		57db80effe2f   httpd     "httpd-foreground"   5 minutes ago   Up 5 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+		httpd        latest    6fd77d7e5eb7   2 months ago   167MB
+
+		> curl http://localhost:8080
+		It works
+
+		> pwd
+		C:\app\docker_workspace\copy
+
+		> echo "<h1>hello</h1>" > index.html
+
+		> cat index.html
+		<h1>Hello</h1>
+
+		> docker container cp index.html apa0001ex1:/usr/local/apache2/htdocs/.						<--- ***
+		> docker cp index.html apa000ex1:/usr/local/apache2/htdocs/.								<--- ***
+		Successfully copied 2.05kB to apa000ex1:/usr/local/apache2/htdocs/.
+
+		> docker container cp index.html 57db80effe2f:/usr/local/apache2/htdocs/.					<--- ***
+		> docker cp index.html 57db80effe2f:/usr/local/apache2/htdocs/.								<--- ***
+		Successfully copied 2.05kB to 57db80effe2f:/usr/local/apache2/htdocs/.
+
+		> docker exec -it apa000ex1 /bin/bash														<--- ***
+		root@57db80effe2f:~# cd /usr/local/apache2/htdocs
+
+		root@57db80effe2f:/usr/local/apache2/htdocs# cat index.html
+		<h1>Hello</h1>
+
+		root@57db80effe2f:/usr/local/apache2/htdocs# exit
+
+		> curl http://localhost:8080																<--- ***
+		<h1>Hello</h1>
+
+	■ Example2: copy index.html from [ docker container ] to [ host ]
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS         PORTS                  NAMES
+		57db80effe2f   httpd     "httpd-foreground"   5 minutes ago   Up 5 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> pwd
+		C:\app\docker_workspace\copy
+
+		> rm index.html
+
+		> docker container cp apa000ex1:/usr/local/apache2/htdocs/index.html .						<--- ***
+		> docker cp apa000ex1:/usr/local/apache2/htdocs/index.html .								<--- ***
+		Successfully copied 2.05kB to C:\app\docker_workspace\copy\.
+
+		> dir
+		...
+		2023-12-22  오전 05:53                17 index.html
+		...
+
+		> docker container cp 57db80effe2f:/usr/local/apache2/htdocs/index.html .					<--- ***
+		> docker cp 57db80effe2f:/usr/local/apache2/htdocs/index.html .								<--- ***
+		Successfully copied 2.05kB to C:\app\docker_workspace\copy\.
+
+		> cat index.html
+		<h1>Hello2</h1>
+
+		> docker exec apa000ex1 cat /usr/local/apache2/htdocs/index.html 							<--- ***
+		<h1>Hello2</h1>
+
+
+24. "Volume Mount"
+
+	■ Step1. Create "docker volumes" to be mounted
+			 by docker container to use like local directory
+
+		> docker system df
+		TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+		Images          1         0         167.5MB   167.5MB (100%)
+		Containers      0         0         0B        0B
+		Local Volumes   0         0         0B        0B											<--- ***
+		Build Cache     0         0         0B        0B
+
+		> docker volume create myvol1																<--- ***
+		> docker volume create myvol2																<--- ***
+
+		> docker volume ls
+		DRIVER    VOLUME NAME
+		local     myvol1
+		local     myvol2
+
+		> docker volume inspect myvol1
+		> docker inspect myvol1																		<--- ***
+		[
+			{
+				"CreatedAt": "2023-12-22T00:00:13Z",
+				"Driver": "local",
+				"Labels": null,
+
+				// This mount point is the volume path to be "mounted"
+				// to some path in the docker container
+				"Mountpoint": "/var/lib/docker/volumes/myvol1/_data",								<--- ***
+				"Name": "myvol1",																	<--- ***
+
+				"Options": null,
+				"Scope": "local"
+			}
+		]
+
+	■ Step2. Mount docker volumes when "creating" docker container with "-v" options
+
+		> docker run ^
+		--name apa000ex1 ^
+		-d -p 8080:80 ^
+		-v myvol1:/opt/volumes/myvol1 ^
+		-v myvol2:/opt/volumes/myvol2 ^
+		httpd																						<--- ***
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          PORTS                  NAMES
+		454071d631eb   httpd     "httpd-foreground"   24 minutes ago   Up 24 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker exec -it apa000ex1 /bin/bash														<--- ***
+		root@454071d631eb:/usr/local/apache2# cd /opt/volumes/
+
+		root@454071d631eb:/opt/volumes# ls -l
+		total 8
+		drwxr-xr-x 2 root root 4096 Dec 22 00:00 myvol1												<--- ***
+		drwxr-xr-x 2 root root 4096 Dec 22 00:00 myvol2												<--- ***
+
+		root@454071d631eb:/opt/volumes# cd myvol1													<--- ***
+		root@454071d631eb:/opt/volumes/myvol1# touch f1 f2											<--- ***
+		root@454071d631eb:/opt/volumes/myvol1# ls -l												<--- ***
+		total 0
+		-rw-r--r-- 1 root root 0 Dec 22 01:18 f1
+		-rw-r--r-- 1 root root 0 Dec 22 01:18 f2
+
+		root@454071d631eb:/opt/volumes# cd myvol2
+		root@454071d631eb:/opt/volumes/myvol1# touch f3 f4											<--- ***
+		root@454071d631eb:/opt/volumes/myvol1# ls -l												<--- ***
+		total 0
+		-rw-r--r-- 1 root root 0 Dec 22 01:18 f3
+		-rw-r--r-- 1 root root 0 Dec 22 01:18 f4
+
+		root@454071d631eb:/opt/volumes# touch f5 f6													<--- ***
+		root@454071d631eb:/opt/volumes/myvol1# ls -l												<--- ***
+		total 0
+		-rw-r--r-- 1 root root 0 Dec 22 01:18 f5
+		-rw-r--r-- 1 root root 0 Dec 22 01:18 f6
+
+		root@454071d631eb:/opt/volumes# ls -l
+		total 8
+		-rw-r--r-- 1 root root    0 Dec 22 01:48 f5													<--- ***
+		-rw-r--r-- 1 root root    0 Dec 22 01:48 f6													<--- ***
+		drwxr-xr-x 2 root root 4096 Dec 22 01:18 myvol1
+		drwxr-xr-x 2 root root 4096 Dec 22 01:19 myvol2
+
+	■ Step3. Inspect docker volumes mounted in the docker container.																					<--- ***
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          PORTS                  NAMES
+		454071d631eb   httpd     "httpd-foreground"   24 minutes ago   Up 24 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker container inspect apa000ex1														<--- ***
+		> docker container inspect 454071d631eb														<--- ***
+		> docker inspect apa000ex1																	<--- ***
+		> docker inspect 454071d631eb																<--- ***
+		[
+			{
+				...
+				"Mounts": [																			<--- ***
+					{
+						"Type": "volume",
+						"Name": "myvol2",
+						"Source": "/var/lib/docker/volumes/myvol2/_data",							<--- ***: source path in volume
+						"Destination": "/opt/volumes/myvol2",										<--- ***: target path in container
+						"Driver": "local",
+						"Mode": "z",
+						"RW": true,
+						"Propagation": ""
+					},
+					{
+						"Type": "volume",
+						"Name": "myvol1",
+						"Source": "/var/lib/docker/volumes/myvol1/_data",							<--- ***: source path in volume
+						"Destination": "/opt/volumes/myvol1",										<--- ***: target path in container
+						"Driver": "local",
+						"Mode": "z",
+						"RW": true,
+						"Propagation": ""
+					}
+				],
+				...
+			}
+		]
+
+	■ Step4. Caution - When removing docker container with docker volumes,
+					   Take care of the parent directory of mount point in docker container.
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED             STATUS             PORTS                  NAMES
+		454071d631eb   httpd     "httpd-foreground"   About an hour ago   Up About an hour   0.0.0.0:8080->80/tcp   apa000ex1
+		
+		// from another terminal
+		> docker exec -it apa000ex1 /bin/bash
+		root@454071d631eb:/usr/local/apache2# cd /opt/volumes/
+		root@454071d631eb:/opt/volumes# ls -l
+		total 8
+		-rw-r--r-- 1 root root    0 Dec 22 01:48 f5													<--- ***
+		-rw-r--r-- 1 root root    0 Dec 22 01:48 f6													<--- ***
+		drwxr-xr-x 2 root root 4096 Dec 22 01:18 myvol1
+		drwxr-xr-x 2 root root 4096 Dec 22 01:19 myvol2
+
+
+		> docker container stop apa000ex1
+		> docker stop 454071d631eb																	<--- ***
+		454071d631eb
+
+		> docker container rm apa000ex1
+		> docker rm 454071d631eb																	<--- ***
+		454071d631eb
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES						<--- ***
+
+		> docker volume ls
+		DRIVER    VOLUME NAME
+		local     myvol1
+		local     myvol2
+
+		> docker run --name apa000ex1 -d -p 8080:80 -v myvol1:/opt/volumes/myvol1 -v myvol2:/opt/volumes/myvol2 httpd
+		2465458549e68949c271f0a6d9bfe7da7c02433e12d6ae23298de38cb0959514
+
+		> docker exec -it apa000ex1 /bin/bash
+		root@2465458549e6:/usr/local/apache2# cd /opt
+		root@2465458549e6:/opt# ls
+		volumes
+		root@2465458549e6:/opt# cd volumes/
+		root@2465458549e6:/opt/volumes# ls
+		myvol1  myvol2																				<--- ***: *NO* f5, f6 file
+		root@2465458549e6:/opt/volumes# cd myvol1
+		root@2465458549e6:/opt/volumes/myvol1# ls
+		f1  f2																						<--- ***: remained f1, f2 file
+		root@2465458549e6:/opt/volumes/myvol1# cd ../myvol2
+		root@2465458549e6:/opt/volumes/myvol2# ls -l
+		total 0
+		-rw-r--r-- 1 root root 0 Dec 22 01:19 f3													<--- ***: remained file
+		-rw-r--r-- 1 root root 0 Dec 22 01:19 f4													<--- ***: remained file
+		root@2465458549e6:/opt/volumes/myvol2# exit
+
+
+25. "Bind Mount"
+
+	● docker volume rm --help
+
+		Usage:  docker volume rm [OPTIONS] VOLUME [VOLUME...]
+
+		Remove one or more volumes.
+		You cannot remove a volume that is in use by a container.
+
+		Aliases:
+			> docker volume rm
+			> docker volume remove
+
+		Examples:
+
+			$ docker volume rm hello
+			hello
+
+	■ Step1. Remove the previous created all "docker volumes"
+
+		> docker volume ls
+		DRIVER    VOLUME NAME
+		local     myvol1
+		local     myvol2
+
+		> docker volume rm myvol1 myvol2
+		myvol1
+		myvol2
+
+		> docker system df
+		TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+		Images          1         0         167.5MB   167.5MB (100%)								<--- ***
+		Containers      0         0         0B        0B
+		Local Volumes   0         0         0B        0B
+		Build Cache     0         0         0B        0B
+
+	■ Step2. bind mount
+
+		(1) Source path: C:/app/docker_workspace/copy
+		(2) Target path: apa000ex1:/opt/bind/copy
+
+		> cd C:/app/docker_workspace/copy															<--- ***
+		> C:\app\docker_workspace\copy>dir
+		...
+		C:\app\docker_workspace\copy 디렉터리
+		...
+					0개 파일                   0 바이트
+		
+		// Here, "." means current directory. that is, source path.
+		> docker run --name apa000ex1 -d -p 8080:80 -v .:/opt/bind/copy httpd						<--- ***
+		940a92fcb376043cf213feb84934a872939ad24c9e7ce5fa46d49b39252e8e94
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          PORTS                  NAMES
+		940a92fcb376   httpd     "httpd-foreground"   18 seconds ago   Up 17 seconds   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker exec -it 940a92fcb376 /bin/bash
+		> docker exec -it apa000ex1 /bin/bash														<--- ***
+		root@940a92fcb376:/opt/bind# cd /opt/bind/copy
+		root@940a92fcb376:/opt/bind/copy# ls														<--- ***
+		root@940a92fcb376:/opt/bind/copy#
+
+	■ Step3. I/O in way of bi-directional
+
+		// In another terminal, Create a empty file.
+		> cd C:/app/docker_workspace/copy
+		> touch f1																					<--- ***
+
+		// In docker container, check target path.
+		> pwd
+		/opt/bind/copy
+		root@940a92fcb376:/opt/bind/copy# ls -l
+		total 0
+		-rwxrwxrwx 1 root root 0 Dec 22 02:22 f1													<--- ***: *bi-directional*
+		root@940a92fcb376:/opt/bind/copy# echo hello1 > f1											<--- ***
+		root@940a92fcb376:/opt/bind/copy# cat f1
+		hello1																						<--- ***
+
+		// In another terminal, check "f1" file's content
+		> pwd
+		C:\app\docker_workspace\copy
+		> cat f1
+		hello1																						<--- ***: *bi-directional*
+		> echo hello2 >> f1 																		<--- ***
+		> cat f1
+		hello1
+		hello2																						<--- ***
+
+		// In docker container, check target path.
+		root@940a92fcb376:/opt/bind/copy# pwd
+		/opt/bind/copy
+		root@940a92fcb376:/opt/bind/copy# cat f1													<--- ***
+		hello1
+		hello2																						<--- ***: *bi-directional*
+
+	■ Step3. Bind unmount
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          PORTS                  NAMES
+		940a92fcb376   httpd     "httpd-foreground"   14 minutes ago   Up 14 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker stop apa000ex1
+		apa000ex1
+		
+		> docker rm 940a92fcb376
+		940a92fcb376
+
+		> cd C:/app/docker_workspace/copy
+		> dir
+		...
+		2023-12-22  오전 11:28                16 f1													<--- ***: changes preserved 
+		...
+		> cat f1																					<--- ***: changes preserved
+		hello1
+		hello2
+
+		> docker system df
+		TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+		Images          1         0         167.5MB   167.5MB (100%)
+		Containers      0         0         0B        0B											<--- ***
+		Local Volumes   0         0         0B        0B											<--- ***
+		Build Cache     0         0         0B        0B
+
+
+26. Attach file system with "--mount" option when creating a docker container
+
+	● > docker container run --help | grep -i mount
+	  > docker run --help | grep -i mount															<--- ***
+      --mount mount                    *Attach a filesystem mount to the							<--- ***: Use this
+      --read-only                      Mount the container's root
+      --tmpfs list                     Mount a *tmpfs* directory									<--- ***
+	  -v, --volume list                *Bind* mount a volume										<--- ***
+	  --volumes-from list              Mount volumes from the specified
+	
+	● "--mount" option: Add bind mounts or volumes using the --mount flag
+
+	  ○ The "--mount" flag allows you to mount ⓐ "volumes" ⓑ "host-directories" and ⓒ "tmpfs" mounts
+	  	in a docker container.
+	  ○ The "--mount" flag supports most options supported by the "-v" or the "--volume" flag,
+	  	but uses a different syntax.
+	  ○	For in-depth information on the "--mount" flag, and a comparison between "--volume" and "--mount",
+	  	refer to Bind mounts.
+	  ○	Even though there is no plan to deprecate "--volume", usage of "--mount" is *recommended*.	<--- ***
+
+	  ○ Example:
+
+	  	$ docker run --read-only --mount type=volume,target=/icanwrite busybox touch /icanwrite/here
+		$ docker run -t -i --mount type=bind,src=/data,dst=/data busybox bash
+
+
+	● Example1: "Bind Mount"
+
+		■ Step1. When creating a docker container, mount specific filesystem to the container
+				with "--mount" option of "docker run" command as follows:
+
+			○ source path: C:/app/docker_workspace/copy
+			○ target path: /opt/mount/copy
+
+			> cd C:/app/docker_workspace/copy
+
+			> docker run ^
+			--name apa000ex1 ^
+			-d ^
+			-p 8080:80 ^
+			--mount type=bind,src=C:\app\docker_workspace\copy,dst=/opt/bind/copy ^
+			httpd																					<--- ***
+
+		■ Step2. Check the mount point whether prevous created files are remained
+
+			> docker exec -it apa000ex1 bash														<--- ***
+			root@026be36065ae:/usr/local/apache2# cd /opt/bind/copy
+			root@026be36065ae:/opt/bind/copy# ls -l
+			total 0
+			-rwxrwxrwx 1 root root 16 Dec 22 02:28 f1												<--- ***
+			root@026be36065ae:/opt/bind/copy# cat f1												<--- ***
+			hello1
+			hello2																					<--- ***
+
+		■ Step3. inspect docker container to check mount volumes
+
+			> docker container inspect 4c46d22de3e9
+			> docker inspect apa000ex1
+			[
+				...
+				"Mounts": [
+					{
+						"Type": "volume",
+						"Name": "myvol1",
+						"Source": "/var/lib/docker/volumes/myvol1/_data",							<-- ***
+						"Destination": "/opt/volume/myvol1",										<-- ***
+						"Driver": "local",
+						"Mode": "z",
+						"RW": true,
+						"Propagation": ""
+					}
+				],
+				...
+			]
+
+
+	● Example2: "*One* Volume Mount"
+
+		■ Step1. Prune all docker volumes clearly
+
+			> docker system df
+			TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+			Images          2         1         171.7MB   4.262MB (2%)
+			Containers      1         1         59B       0B (0%)									<--- ***
+			Local Volumes   0         0         0B        0B
+			Build Cache     0         0         0B        0B
+
+			> docker ps -a
+
+			> docker stop apa000ex1
+			apa000ex1
+			> docker rm apa000ex1
+			apa000ex1
+
+		■ Step2. Create docker volumes to mount
+
+			> docker volume create myvol1
+			> docker volume create myvol2
+
+			> docker volume ls
+			DRIVER    VOLUME NAME
+			local     myvol1
+			local     myvol2
+
+		■ Step3. Creating a docker container with --mount option to mount *one* volume 				<--- ***
+				 as folllows:
+
+			○ source volumes: myvol1
+			○ target path: /opt/volumes/myvol1
+
+			> docker run ^
+			--name apa000ex1 ^
+			-d -p 8080:80 ^
+			--mount type=volume,src=myvol1,dst=/opt/volume/myvol1 ^
+			httpd																					<--- ***
+
+		■ Step4. Check volume mounted
+
+			> docker exec -it apa000ex1 bash														<--- ***
+			root@6c0f95cb5c95:/usr/local/apache2# cd /opt/volume/myvol1/
+			root@6c0f95cb5c95:/opt/volume/myvol1# ls
+
+		■ Step5. inspect docker container to check a mounted volume
+
+			> docker container inspect apa000ex1
+			> docker inspect apa000ex1
+			[
+				{
+					...
+					"Mounts": [																		<--- ***
+						{
+							"Type": "volume",
+							"Name": "myvol1",														<--- ***
+							"Source": "/var/lib/docker/volumes/myvol1/_data",
+							"Destination": "/opt/volumes/myvol1",									<--- ***
+							"Driver": "local",
+							"Mode": "z",
+							"RW": true,
+							"Propagation": ""
+						}
+					],
+					...
+				}
+			]
+
+
+	● Example3: "*Several* Volumes Mount"
+
+		■ Step1. Creating a docker container with --mount option to mount volumes 					<--- ***
+				 as folllows:
+
+			○ source volumes: myvol1, myvol2
+			○ target path: /opt/volumes/myvol1, /opt/volumes/myvol2
+
+			> docker run ^
+			--name apa000ex1 ^
+			-d -p 8080:80 ^
+			--mount type=volume,src=myvol1,dst=/opt/volumes/myvol1 ^								<--- ***
+			--mount type=volume,src=myvol2,dst=/opt/volumes/myvol2 ^								<--- ***
+			httpd																					
+
+		■ Step2. Check volumes mounted
+
+			> docker exec -it apa000ex1 bash														<--- ***
+			root@6c0f95cb5c95:/usr/local/apache2# cd /opt/volumes
+			root@6c0f95cb5c95:/opt/volume# ls
+			myvol1	myvol2																			<--- ***
+		
+		■ Step3. inspect docker container to check mounted volumes
+
+			> docker container inspect apa000ex1
+			> docker inspect 6c0f95cb5c95															<--- ***
+			[
+				{
+					...
+					"Mounts": [																		<--- ***
+						{
+							"Type": "volume",
+							"Name": "myvol1",														<--- ***
+							"Source": "/var/lib/docker/volumes/myvol1/_data",
+							"Destination": "/opt/volumes/myvol1",									<--- ***
+							"Driver": "local",
+							"Mode": "z",
+							"RW": true,
+							"Propagation": ""
+						},
+						{
+							"Type": "volume",
+							"Name": "myvol2",														<--- ***
+							"Source": "/var/lib/docker/volumes/myvol2/_data",
+							"Destination": "/opt/volumes/myvol2",									<--- ***
+							"Driver": "local",
+							"Mode": "z",
+							"RW": true,
+							"Propagation": ""
+						}
+					],
+					...
+				}
+			]
+
+
+27. Backup docker volume data
+
+	● The core to backup data in the docker volume is to use "bind mount" path and "volume mount"
+	  Simultaneouly, Thus ceate a backup tar file into the "bind mount" path, due to the 
+	  "bind mount" path could be shared between host and docker container.							<--- *** 
+
+	● To backup data in the docker volume, use tar command to compress data into *.tar file
+	  as follows:
+
+		> docker system df
+		TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+		Images          0         0         0B        0B
+		Containers      0         0         0B        0B
+		Local Volumes   0         0         0B        0B
+		Build Cache     0         0         0B        0B
+
+	  	> docker volume create myvolume																<--- ***
+		myvolume
+
+		> docker volume ls
+		DRIVER    VOLUME NAME
+		local     myvolume
+
+		> docker run --name apa000ex1 -d -p 8080:80 -v myvolume:/opt/volumes/myvolume httpd			<--- ***
+		...
+		f48d1cba46ee64e7d1e579cb78c848f4f5600b458e5ee7abec7dea24bc2c25de
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS         PORTS                  NAMES
+		f48d1cba46ee   httpd     "httpd-foreground"   5 seconds ago   Up 4 seconds   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker exec -it apa000ex1 bash															<--- ***
+		root@f48d1cba46ee:/usr/local/apache2# cd /opt/volumes/myvolume/
+		root@f48d1cba46ee:/opt/volumes/myvolume# ls
+
+		// Create data, thee files and directories to backup to host computer.
+		root@f48d1cba46ee:/opt/volumes/myvolume# touch f1 f2 f3										<--- ***
+		root@f48d1cba46ee:/opt/volumes/myvolume# mkdir d1 d2 d3										<--- ***
+		root@f48d1cba46ee:/opt/volumes/myvolume# find . -ls
+			113      4 drwxr-xr-x   5 root     root         4096 Dec 22 04:22 .
+			7498      4 drwxr-xr-x   2 root     root         4096 Dec 22 04:22 ./d2
+			7494      0 -rw-r--r--   1 root     root            0 Dec 22 04:22 ./f2
+			7551      4 drwxr-xr-x   2 root     root         4096 Dec 22 04:22 ./d3
+			7495      0 -rw-r--r--   1 root     root            0 Dec 22 04:22 ./f3
+			7497      4 drwxr-xr-x   2 root     root         4096 Dec 22 04:22 ./d1
+			7493      0 -rw-r--r--   1 root     root            0 Dec 22 04:22 ./f
+
+		// Backup all data to the host computer with "tar" command & bind mount,
+		// Because that "bind mount" is shared between host and docker container.
+		> cd C:\app\docker_workspace\backup
+		> C:\app\docker_workspace\backup>pwd
+		C:\app\docker_workspace\backup
+
+		> docker run ^
+		// as soon as creating the docker container, remove it.
+		--rm ^
+		// mount the specified docker volume to the specified path in the docker container.
+		-v myvolume:/opt/volumes/myvolume ^
+		// bind mount the specified host path to the specified path in the docker container.
+		// Don't forget that this bind mount point is shared between host and the docker container. (***)
+		-v .:/opt/backup ^																			<--- ***: bind mount #1
+		OR
+		-v C:\app\docker_workspace\backup:/opt/backup ^												<--- ***: bind mount #2
+		httpd ^
+		// Remote command executed in the docker container.
+		// create tar backup file into the "bind mount" point.
+		tar cvfz /opt/backup/backup.tar.gz /opt/volumes/myvolyme									<--- ***
+
+		> dir
+		...
+		2023-12-22  오후 01:48               205 backup.tar.gz										<--- ***
+
+		> tar tvfz backup.tar.gz																	<--- ***
+		drwxr-xr-x  0 root   root        0 12 22 13:22 opt/volumes/myvolume/
+		drwxr-xr-x  0 root   root        0 12 22 13:22 opt/volumes/myvolume/d2/
+		-rw-r--r--  0 root   root        0 12 22 13:22 opt/volumes/myvolume/f2
+		drwxr-xr-x  0 root   root        0 12 22 13:22 opt/volumes/myvolume/d3/
+		-rw-r--r--  0 root   root        0 12 22 13:22 opt/volumes/myvolume/f3
+		drwxr-xr-x  0 root   root        0 12 22 13:22 opt/volumes/myvolume/d1/
+		-rw-r--r--  0 root   root        0 12 22 13:22 opt/volumes/myvolume/f1
+
+
+28. Backup "bind monted" data
+
+	● There is nothing to do,
+	  because already bind mount path could be shared between host and docker container.			<--- ***
+
+
+29. Create my own image with "docker container commit" command.										<--- ***
+
+	● Usage:
+
+		> docker container commit --help
+		Usage:  docker container commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+
+		Create a new image from a container's changes
+
+		Aliases:
+			
+			> docker container commit
+			> docker commit																			<--- ***
+
+		Options:
+			-a, --author string    Author (e.g., "John Hannibal Smith
+									<hannibal@a-team.com>")
+			-c, --change list      Apply *Dockerfile* instruction to the created image				<--- ***
+			-m, --message string   Commit message 													<--- ***
+			-p, --pause            Pause container during commit (default true)
+
+	● Step1. Create a new docker container to the base of a new image.
+
+		> docker system df
+		> docker run --name apa000ex1 -d -p 8080:80 httpd
+		...
+		f139ad725a5d983421e6aacee14289fc07adbca6a1ecc50a8b17188b19aa6e8c
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          PORTS                  NAMES
+		f139ad725a5d   httpd     "httpd-foreground"   13 seconds ago   Up 13 seconds   0.0.0.0:8080->80/tcp   apa000ex1
+
+	● Step2. Give changes into the docker container.
+
+		> docker container exec -it apa000ex1 bash
+
+		> docker exec -it apa000ex1 bash															<--- ***
+		root@f139ad725a5d:/usr/local/apache2# cd htdocs
+		root@f139ad725a5d:/usr/local/apache2/htdocs# cat index.html
+		<html><body><h1>It works!</h1></body></html>
+		root@f139ad725a5d:/usr/local/apache2/htdocs# echo "<html><body><h3>Hello, World</h3></body></html>" >> index.html
+		root@f139ad725a5d:/usr/local/apache2/htdocs# cat index.html
+		<html><body><h1>It works!</h1></body></html>
+		<html><body><h3>Hello, World</h3></body></html>												<--- ***
+		root@f139ad725a5d:/usr/local/apache2/htdocs# exit
+		exit
+
+		> curl http://localhost:8080
+		<html><body><h1>It works!</h1></body></html>
+		<html><body><h3>Hello, World</h3></body></html>
+
+	● Step3. Create a new image from current docker container with "commit" command.
+
+		> docker container commit apa000ex1 myhttpd
+		> docker commit apa000ex1 myhttpd															<--- ***
+		sha256:62c480ab6410c536764caf75935ba803af9bdafdf281c207fa544f7d336f75c5						<--- ***: imageId
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+		myhttpd      latest    62c480ab6410   7 seconds ago   167MB									<--- ***: new image
+		httpd        latest    6fd77d7e5eb7   2 months ago    167MB
+
+	● Step4. Creating docker container with new docker image, "myhttpd"
+
+		> docker run --name myhttpd-container -d -p 8080:80 myhttpd									<--- ***
+		f58692eeaa26c93cfbc9a36db9461ca0b8f2602369fd376914ec848605daf808
+		docker: Error response from daemon: 
+			driver failed programming external connectivity on endpoint myhttpd-container
+			(39e433386a485692e05b14cd054e0e5a2527298481bdee4b07b82c2bc1892598):
+			// "apa000ex1" container already is in use, port 8080 in host computer.					<--- ***: reason of Error
+			Bind for 0.0.0.0:8080 failed: port is already allocated.								<--- ***: Error
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED              STATUS             PORTS                  NAMES
+		f58692eeaa26   myhttpd   "httpd-foreground"   About a minute ago   Created                                   *myhttpd-container*
+		f139ad725a5d   httpd     "httpd-foreground"   About an hour ago    Up About an hour   0.0.0.0:8080->80/tcp   apa000ex1
+
+		// The "apa000ex1" container which already in use of port 8080 stopped
+		// to avoid the above error.
+		> docker stop apa000ex1																		<--- ***
+		apa000ex1
+
+		> docker container start myhttpd-container
+		> docker start f58692eeaa26																	<--- ***
+		f58692eeaa26
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED         STATUS                     *PORTS*                NAMES
+		f58692eeaa26   myhttpd   "httpd-foreground"   6 minutes ago   Up 4 minutes               0.0.0.0:8080->80/tcp   myhttpd-container
+		f139ad725a5d   httpd     "httpd-foreground"   2 hours ago     Exited (0) 4 minutes ago                          apa000ex1
+
+		> curl http://localhost:8080
+		<html><body><h1>It works!</h1></body></html>
+		<html><body><h3>Hello, World</h3></body></html>
+
+		> docker container stop myhttpd-container
+		> docker stop f58692eeaa26
+		f58692eeaa26
+
+		> docker container rm myhttpd-container														<--- ***
+		> docker rm f58692eeaa26
+		f58692eeaa26
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED       STATUS                      PORTS     NAMES
+		f139ad725a5d   httpd     "httpd-foreground"   2 hours ago   Exited (0) 11 minutes ago             apa000ex1
+
+		> docker run --name myhttpd-contaienr -d -p 8081:80 myhttpd									<--- ***
+		627c2779eae6f5763b17ca0e610147126a1f6995a00051492637f3dae60e3726
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS                      PORTS                  NAMES
+		627c2779eae6   myhttpd   "httpd-foreground"   44 seconds ago   Up 43 seconds               0.0.0.0:8081->80/tcp   myhttpd-container
+		f139ad725a5d   httpd     "httpd-foreground"   2 hours ago      Exited (0) 12 minutes ago                          apa000ex1
+
+		> curl http://localhost:8081																<--- ***
+		<html><body><h1>It works!</h1></body></html>
+		<html><body><h3>Hello, World</h3></body></html>
+
+		> docker start apa000ex1
+		apa000ex1
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED              STATUS              *PORTS*                NAMES
+		627c2779eae6   myhttpd   "httpd-foreground"   About a minute ago   Up About a minute   0.0.0.0:8081->80/tcp   myhttpd-container
+		f139ad725a5d   httpd     "httpd-foreground"   2 hours ago          Up 2 seconds        0.0.0.0:8080->80/tcp   apa000ex1
+
+		> curl http://localhost:8080																<--- ***
+		<html><body><h1>It works!</h1></body></html>
+		<html><body><h3>Hello, World</h3></body></html>
+
+
+30. Create my own image with "Dockerfile" file.														<--- ***
+
+	● To create my own new docker image,
+	  It needs:
+
+	  	ⓐ Base docker image																			<--- ***
+		ⓑ Dockerfile																				<--- ***
+		ⓒ Material Folder + Files to append																			<--- ***
+		ⓓ "docker build" command																	<--- ***
+
+	● Usage:
+
+		> docker build -t newImageName material_folder												<--- ***: ⓓ "docker build" command
+
+	● Base docker image	
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+		myhttpd      latest    62c480ab6410   39 minutes ago   167MB
+		*httpd*      latest    6fd77d7e5eb7   2 months ago     167MB								<--- ***: ⓐ Base docker image
+														 
+	● Step1. Make a material folder and prepare "files to append" to the "base" docker image.
+
+		C:\app\docker_workspace>mkdir material														<--- ***: ⓒ material folder
+		C:\app\docker_workspace>cd material
+		C:\app\docker_workspace\material>
+		C:\app\docker_workspace\material> touch F1 F2 F3 index.html
+		C:\app\docker_workspace\material> mkdir Yoseph
+		C:\app\docker_workspace\material> echo "<h3>Hello, World!!!</h3>" > index.html
+		C:\app\docker_workspace\material> cat index.html
+		"<h3>Hello, World!!!</h3>"
+
+		C:\app\docker_workspace\material> dir
+		...
+		2023-12-22  오후 05:11                 0 F1
+		2023-12-22  오후 05:11                 0 F2
+		2023-12-22  오후 05:11                 0 F3
+		2023-12-22  오후 05:11                29 index.html
+		2023-12-22  오후 05:15    <DIR>          Yoseph
+
+	● Step2. Create a "Dockerfile".
+	
+		C:\app\docker_workspace\material>touch Dockerfile 											<--- ***: ⓑ Dockerfile
+		C:\app\docker_workspace\material>more Dockerfile											<--- ***: ⓑ Dockerfile
+		FROM httpd
+		COPY index.html /usr/local/apache2/htdocs
+		ADD F1 /opt
+		ADD F2 /opt
+		ADD F3 /opt
+		ADD Yoseph /opt
+
+	● Step3. Build new image.
+
+		// To specify the folder in which have the "Dockerfile" file.
+		> docker build -t newhttpd C:\app\docker_workspace\material									<--- ***: ⓓ "docker build" command
+
+		[+] Building 0.7s (11/11) FINISHED                                                          docker:default
+		=> [internal] load build definition from Dockerfile                                         0.1s
+		=> => transferring dockerfile: 150B                                                         0.0s
+		=> [internal] load .dockerignore                                                            0.1s
+		=> => transferring context: 2B                                                              0.0s
+		=> [internal] load metadata for docker.io/library/httpd:latest                              0.0s
+		=> [1/6] FROM docker.io/library/httpd                                                       0.1s
+		=> [internal] load build context                                                            0.1s
+		=> => transferring context: 163B                                                            0.0s
+		=> [2/6] COPY index.html /usr/local/apache2/htdocs                                          0.1s
+		=> [3/6] ADD F1 /opt                                                                        0.1s
+		=> [4/6] ADD F2 /opt                                                                        0.0s
+		=> [5/6] ADD F3 /opt                                                                        0.0s
+		=> [6/6] ADD Yoseph /opt                                                                    0.0s
+		=> exporting to image                                                                       0.1s
+		=> => exporting layers                                                                      0.1s
+		=> => writing image sha256:586e864cf94b25543f043934b4a1144d761c8a4ee6f0aa32fe356e766f76b2e1 0.0s
+		=> => naming to docker.io/library/newhttpd                                                  0.0s
+
+		View build details: docker-desktop://dashboard/build/default/default/6mrr50gs2b0dvbqbfiqnxshlz
+
+		What's Next?
+		View a summary of image vulnerabilities and recommendations → docker scout quickview
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+		newhttpd     latest    586e864cf94b   57 seconds ago   167MB								<--- ***: a new created image
+		myhttpd      latest    62c480ab6410   55 minutes ago   167MB
+		httpd        latest    6fd77d7e5eb7   2 months ago     167MB
+
+	● Step4. Create a new docker container with new image, "newhttpd".
+
+		> docker run --name newhttpd-container -d -p 8082:80 newhttpd								<--- ***
+		ae0d5392373662a6179b26b8e1925756bbc48dc05f84860073ff84a1c6d2f168
+
+		> docker ps -a
+		CONTAINER ID   IMAGE      COMMAND              CREATED          STATUS          PORTS                  NAMES
+		ae0d53923736  *newhttpd*  "httpd-foreground"   16 seconds ago   Up 15 seconds   0.0.0.0:8082->80/tcp   *newhttpd-container*
+		627c2779eae6   myhttpd    "httpd-foreground"   44 minutes ago   Up 44 minutes   0.0.0.0:8081->80/tcp   myhttpd-container
+		f139ad725a5d   httpd      "httpd-foreground"   2 hours ago      Up 42 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+	
+		> curl http://localhost:8082																<--- ***
+		"<h3>Hello, World!!!</h3>"
+
+		> docker exec -it newhttpd-container bash 													<--- ***
+		root@ae0d53923736:/usr/local/apache2# cd /opt												<--- ***
+		root@ae0d53923736:/opt# ls
+		F1  F2  F3																					<--- ***
+		root@ae0d53923736:/opt# ls -l																<--- ***
+		total 0
+		-rwxr-xr-x 1 root root 0 Dec 22 08:11 F1
+		-rwxr-xr-x 1 root root 0 Dec 22 08:11 F2
+		-rwxr-xr-x 1 root root 0 Dec 22 08:11 F3
+		root@ae0d53923736:/opt# exit
+		exit
+
+	● Step5. Clean up after.
+
+		> docker system df
+		TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+		Images          3         3         167.5MB   167.5MB (99%)
+		Containers      3         3         245B      0B (0%)
+		Local Volumes   0         0         0B        0B
+		Build Cache     14        0         142B      142B
+
+		> docker ps -a
+		CONTAINER ID   IMAGE      COMMAND              CREATED          STATUS          PORTS                  NAMES
+		ae0d53923736   newhttpd   "httpd-foreground"   6 minutes ago    Up 6 minutes    0.0.0.0:8082->80/tcp   newhttpd-container
+		627c2779eae6   myhttpd    "httpd-foreground"   50 minutes ago   Up 50 minutes   0.0.0.0:8081->80/tcp   myhttpd-container
+		f139ad725a5d   httpd      "httpd-foreground"   2 hours ago      Up 48 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker stop newhttpd-container
+		newhttpd-container
+
+		> docker stop myhttpd-container
+		myhttpd-container
+
+		> docker rm newhttpd-container
+		newhttpd-container
+
+		> docker rm myhttpd-container
+		myhttpd-container
+
+		> docker ps -a
+		CONTAINER ID   IMAGE     COMMAND              CREATED       STATUS          PORTS                  NAMES
+		f139ad725a5d   httpd     "httpd-foreground"   3 hours ago   Up 50 minutes   0.0.0.0:8080->80/tcp   apa000ex1
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED             SIZE
+		newhttpd     latest    586e864cf94b   15 minutes ago      167MB
+		myhttpd      latest    62c480ab6410   About an hour ago   167MB
+		httpd        latest    6fd77d7e5eb7   2 months ago        167MB
+
+		> docker rmi newhttpd myhttpd
+		...
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+		httpd        latest    6fd77d7e5eb7   2 months ago   167MB
+
+
+31. How to move my image to anywhere ?
+
+	● Usage:
+
+		> docker save --help
+		Usage:  docker save [OPTIONS] IMAGE [IMAGE...]
+
+		Save one or more images to a tar archive (streamed to STDOUT by default)					<--- ***
+
+		Aliases:
+
+			> docker image save
+			> docker save																			<--- ***
+
+		Options:
+		-o, --output string   Write to a file, instead of STDOUT
+
+	● Example1: 
+	
+		■ Save the specified image managed by docker engine to the tar file outside docker engine.
+
+		> cd C:/app/docker_workspace/save
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+		httpd        latest    6fd77d7e5eb7   2 months ago   167MB									<--- ***: image to save
+
+		> docker save -o httpd.tar httpd
+
+		> dir
+		...
+		C:\app\docker_workspace\save 디렉터리
+		...
+		2023-12-22  오후 05:53       172,755,456 httpd.tar											<--- ***
+		...
+
+	● Example2: 
+	
+		■ Load specified image compressed file(tar) into the docker engine.
+	
+		■ Usage:
+
+			> docker load --help
+
+			Usage:  docker load [OPTIONS]
+
+			Load an image from a tar archive or STDIN 												<--- ***
+
+			Aliases:
+
+				> docker image load
+				> docker load																		<--- ***
+
+			Options:
+			-i, --input string   Read from tar archive file, instead of STDIN 						<--- ***
+			-q, --quiet          Suppress the load output 
+	
+
+
+		> cd C:/app/docker_workspace/save
+
+		> dir
+		...
+		C:\app\docker_workspace\save 디렉터리
+		...
+		2023-12-22  오후 05:53       172,755,456 httpd.tar											<--- ***
+		...
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID   CREATED   SIZE 
+
+		// Load the specified tar file into a image managed by the docker engine.	(***)
+		> docker load -i httpd.tar																	<--- ***: load image
+		Loaded image: httpd:latest
+
+		> docker images
+		REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+		httpd        latest    6fd77d7e5eb7   2 months ago   167MB
+
+
+32. 
+
+
+
+
+
+
+
+
+
+
+
+

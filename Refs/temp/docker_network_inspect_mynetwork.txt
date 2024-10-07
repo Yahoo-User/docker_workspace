@@ -1,0 +1,45 @@
+[
+    {
+        "Name": "mynetwork",                                                                                        <--- ***: network name
+        "Id": "0efb321fada83b78e7ed727506c34142d06539fe296bdf1e06e831bb01896419",                                   <--- ***: network id
+        "Created": "2023-12-21T06:02:01.144529437Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.21.0.0/16",
+                    "Gateway": "172.21.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {                                                                                             <--- ***
+            "c6c6115a7cbe7e19743723396b77b7ac8f77f4e6a6438226e692a1ab07685796": {                                   <--- ***: container id
+                "Name": "mycontainer1",                                                                             <--- ***: container name
+                "EndpointID": "abde81fcf5388256f734bf7490cffaf3271418262a83154c16a59bc0952eec11",
+                "MacAddress": "02:42:ac:15:00:02",
+                "IPv4Address": "172.21.0.2/16",                                                                     <--- ***
+                "IPv6Address": ""
+            },
+            "e7971b2a785ceeaba8658e0cfde0bc36053c3ebb6d2ad3e71de14a3ee36bb6fe": {                                   <--- ***: container id
+                "Name": "mycontainer2",                                                                             <--- ***: container name
+                "EndpointID": "330b03a9785767cd4222677089e2c6e2dd2c54991c652f91e2270065c259d9f5",
+                "MacAddress": "02:42:ac:15:00:03",
+                "IPv4Address": "172.21.0.3/16",                                                                     <--- ***
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]

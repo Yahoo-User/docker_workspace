@@ -1,0 +1,339 @@
+*************************************************************
+* Docker Supplemental Education in 2023                     *
+*************************************************************
+
+❯ docker version 				# Show the Docker version information
+❯ docker info 					# Display system-wide information
+
+
+# -----------------------------------------------
+# 1. Manage Docker
+# -----------------------------------------------
+
+❯ docker system df
+❯ docker system df --format table
+❯ docker system df --format json
+
+❯ docker system info 					# Display system-wide information
+❯ docker system info -f json
+
+
+
+# -----------------------------------------------
+# 2. Create and run a new container from an image
+# -----------------------------------------------
+
+formula: docker pull + docker create + docker start
+
+Usage:  docker container run [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+Aliases:
+  docker container run, docker run
+
+Example: 
+  > docker run -d -p 80:80 docker/getting-started
+
+
+❯ docker search docker/getting-started
+NAME                     DESCRIPTION                           STARS     OFFICIAL   AUTOMATED
+docker/getting-started   Getting Started tutorial for Docker   71
+
+❯ docker run -d -p 80:80 docker/getting-started
+Unable to find image 'docker/getting-started:latest' locally
+latest: Pulling from docker/getting-started
+c158987b0551: Pull complete
+1e35f6679fab: Pull complete
+cb9626c74200: Pull complete
+b6334b6ace34: Pull complete
+f1d1c9928c82: Pull complete
+9b6f639ec6ea: Pull complete
+ee68d3549ec8: Pull complete
+33e0cbbb4673: Pull complete
+4f7e34c2de10: Pull complete
+Digest: sha256:d79336f4812b6547a53e735480dde67f8f8f7071b414fbd9297609ffb989abc1
+Status: Downloaded newer image for docker/getting-started:latest
+b7544525c17727074b6a87b6774250c4a40d740b2b85e679b0be4841a270b607
+
+❯ docker ps -a
+CONTAINER ID   IMAGE                    COMMAND                   CREATED          STATUS          PORTS                NAMES
+b7544525c177   docker/getting-started   "/docker-entrypoint.…"   39 seconds ago   Up 37 seconds   0.0.0.0:80->80/tcp   vigilant_keller
+
+
+http://localhost/tutorial/		# 접속테스트 수행
+
+
+# -----------------------------------------------
+# 3. List containers
+# -----------------------------------------------
+
+❯ docker container ls
+❯ docker container list
+❯ docker container ps
+
+❯ docker container ls -a
+❯ docker container list -a
+❯ docker container ls -a -s
+❯ docker container ls -q 		# Only display container IDs
+
+> docker ps
+> docker ps -a
+> docker ps -q 					# Only display container IDs
+
+
+
+# -----------------------------------------------
+# 4. List images
+# -----------------------------------------------
+
+❯ docker images
+❯ docker image ls
+❯ docker image list
+❯ docker image ls -a			# Show all images (default hides intermediate images)
+❯ docker image ls -q			# Only show image IDs
+
+
+# -----------------------------------------------
+# 5. Display detailed information on one or more images
+# -----------------------------------------------
+
+❯ docker image inspect <image-id>
+❯ docker image inspect -f json <image-id>
+
+
+
+# -----------------------------------------------
+# 6. Show the history of an image
+# -----------------------------------------------
+
+❯ docker image history <image-id>
+❯ docker history <image-id>
+
+
+
+# -----------------------------------------------
+# 7. Search Docker Hub for images
+# -----------------------------------------------
+
+Usage:  docker search [OPTIONS] TERM
+
+
+❯ docker search httpd
+...
+
+❯ docker search nginx
+...
+
+
+
+# -----------------------------------------------
+# 8. Download an image from a registry
+# -----------------------------------------------
+
+Usage:  docker pull [OPTIONS] NAME[:TAG|@DIGEST]
+
+Aliases:
+  docker image pull, docker pull
+
+
+> docker image pull nginx
+❯ docker pull nginx
+
+> docker image ls
+
+> docker image inspect <IMAGE ID> or <REPOSITORY>
+
+
+
+# -----------------------------------------------
+# 9. Log in to a Docker registry or cloud backend.
+#    If no registry server is specified,
+#	 the default is defined by the daemon.
+# -----------------------------------------------
+
+❯ docker login -u cherryneo
+❯ docker logout
+
+
+
+# -----------------------------------------------
+# 10. Fetch the logs of a container
+# -----------------------------------------------
+
+❯ docker container logs <container-id>
+❯ docker logs <container-id>
+❯ docker logs --details <container-id>
+❯ docker logs --details --timestamps <container-id>
+❯ docker logs --details -t <container-id>
+
+
+
+# -----------------------------------------------
+# 11. Display detailed information on one or more containers
+# -----------------------------------------------
+
+❯ docker container inspect <container-id>
+❯ docker container inspect -f json <container-id> 			# -t : --timstamps
+
+
+
+# -----------------------------------------------
+# 12. Stop one or more running containers
+# -----------------------------------------------
+
+❯ docker container stop <container-id>
+❯ docker stop <container-id>
+
+
+
+# -----------------------------------------------
+# 13. Start one or more stopped containers
+# -----------------------------------------------
+
+❯ docker container start <container-id>
+❯ docker start <container-id>
+❯ docker start -i <container-id>							# -i : interactive
+
+
+
+# -----------------------------------------------
+# 14. List port mappings or a specific mapping for the container
+# -----------------------------------------------
+
+❯ docker container port <container-id>
+❯ docker port <container-id>
+
+
+
+# -----------------------------------------------
+# 15. Rename a container
+# -----------------------------------------------
+
+❯ docker container rename <container-id> <new_name>
+❯ docker rename <container-id> <new_name>
+
+
+
+# -----------------------------------------------
+# 16. Display the running processes of a container
+# -----------------------------------------------
+
+❯ docker container top <container-id>
+❯ docker top <container-id>
+
+
+
+# -----------------------------------------------
+# 17. Execute a command in a running container
+# -----------------------------------------------
+
+❯ docker container exec <container-id> ls -a
+❯ docker exec <container-id> ls -a
+❯ docker exec <container-id> ps -ef
+
+
+
+# -----------------------------------------------
+# 18. Pause all processes within one or more containers
+# -----------------------------------------------
+
+❯ docker container pause <container-id>
+❯ docker pause <container-id>
+
+
+
+# -----------------------------------------------
+# 19. Unpause all processes within one or more containers
+# -----------------------------------------------
+
+❯ docker container unpause <container-id>
+❯ docker unpause <container-id>
+
+
+
+# -----------------------------------------------
+# 20. Docker Dev Environments CLI interface
+# -----------------------------------------------
+
+❯ docker dev check
+
+
+
+# -----------------------------------------------
+# Manage volumes
+# -----------------------------------------------
+
+Usage:  docker volume COMMAND
+
+❯ docker volume ls 					# List volumes
+
+
+❯ docker volume inspect MyVolume	# Display detailed information on one or more volumes
+...
+        "Mountpoint": "/var/lib/docker/volumes/MyVolume/_data", 		<--- ***
+        "Name": "MyVolume", 											<--- ***
+...
+
+❯ docker volume rm MyVolume 		# Remove one or more volumes.
+									# You cannot remove a volume that is in use by a container.
+❯ docker volume rm -f				# Force the removal of one or more volumes
+❯ docker volume rm --force
+
+
+❯ docker volume create 				# Create a volume with `random` name like commit hash
+❯ docker volume create MyVolume2	# Create a volume with the specified name, `MyVolume2`
+
+❯ docker volume prune --force 		# Remove all unused local volumes
+
+
+
+# -----------------------------------------------
+# Manage networks
+# -----------------------------------------------
+
+Usage:  docker network COMMAND
+
+
+# List networks
+
+❯ docker network ls
+❯ docker network ls -q 				# -q : Only display network IDs
+❯ docker network list
+❯ docker network list -q 			# -q : Only display network IDs
+
+
+# Display detailed information on one or more networks
+
+❯ docker network ls
+❯ docker network inspect -v <NETWORK ID>
+...
+		"Name": "bridge",
+        "Id": "31af1d9979f2b37a1e1042b17978a712eea056311089bff312e46284c9fba240",
+        "Created": "2023-05-14T22:44:36.489625763Z",
+        "Scope": "local",
+        "Driver": "bridge",			<--- ***
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",	<--- ***
+                    "Gateway": "172.17.0.1"		<--- ***
+                }
+            ]
+        },
+...
+        "Containers": {
+            "f09a2d412f54fe52479860226c5fd6ae72f5c24c669f6bf5261c7933627e0729": {
+                "Name": "get_started",
+                "EndpointID": "698596be090cc175d595c96c86eccf76a1b148ef90915d4840087039191636c2",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16", 			<--- ***
+                "IPv6Address": "" 							<--- ***
+            }
+        },
+...
+
+
+
+

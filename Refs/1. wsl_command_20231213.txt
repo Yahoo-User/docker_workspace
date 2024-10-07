@@ -1,0 +1,94 @@
+*************************************************************
+* Windows "wsl" Command Usage                               *
+*************************************************************
+
+01. Where ?
+
+	> which wsl
+	C:\Users\cherr\AppData\Local\Microsoft\WindowsApps\wsl.EXE
+
+
+02. Display usage
+
+	> wsl --help
+
+
+03. Which version ?																<--- ***
+
+	> wsl -v
+	> wsl --version
+	WSL 버전: 2.0.9.0
+	커널 버전: 5.15.133.1-1
+	WSLg 버전: 1.0.59
+	MSRDC 버전: 1.2.4677
+	Direct3D 버전: 1.611.1-81528511
+	DXCore 버전: 10.0.25131.1002-220531-1700.rs-onecore-base2-hyp
+	Windows 버전: 10.0.22631.2792
+
+
+04. Display the list of installed Linux distributions with wsl 2 on Windows.	<--- ***
+
+	> wsl -list
+	> wsl -l																	(short-hand)
+	Linux용 Windows 하위 시스템 배포:
+	Ubuntu-22.04(기본값)
+	docker-desktop
+	docker-desktop-data
+
+	> wsl --list --verbose
+	> wsl --list -v 													   (with short-hand)
+	> wsl -l -v																	(short-hand)
+	NAME                   STATE           VERSION
+  * Ubuntu-22.04           Running         2
+	docker-desktop         Running         2
+	docker-desktop-data    Running         2
+
+
+05. How to update wsl ?															<--- ***
+
+	> wsl --update
+	업데이트 확인 중입니다.
+	Linux용 Windows 하위 시스템 버전으로 업데이트하는 중: 2.0.14.
+
+
+06. Display the status of wsl 2.
+
+	> wsl --status
+	기본 배포: Ubuntu-22.04
+	기본 버전: 2
+
+
+07. Display all installable Linux distributions with wsl 2 on Windows.
+
+	> wsl --list --online
+	> wsl -l -o 																(short-hand)
+	다음은 설치할 수 있는 유효한 배포판 목록입니다.
+	'wsl.exe --install <Distro>'를 사용하여 설치합니다.
+
+	NAME                                   FRIENDLY NAME
+	Ubuntu                                 Ubuntu
+	Debian                                 Debian GNU/Linux
+	kali-linux                             Kali Linux Rolling
+	Ubuntu-18.04                           Ubuntu 18.04 LTS
+	Ubuntu-20.04                           Ubuntu 20.04 LTS
+	Ubuntu-22.04                           Ubuntu 22.04 LTS
+	OracleLinux_7_9                        Oracle Linux 7.9
+	OracleLinux_8_7                        Oracle Linux 8.7
+	OracleLinux_9_1                        Oracle Linux 9.1
+	openSUSE-Leap-15.5                     openSUSE Leap 15.5
+	SUSE-Linux-Enterprise-Server-15-SP4    SUSE Linux Enterprise Server 15 SP4
+	SUSE-Linux-Enterprise-15-SP5           SUSE Linux Enterprise 15 SP5
+	openSUSE-Tumbleweed                    openSUSE Tumbleweed
+
+
+08. Install specified Linux distribution with wsl 2 on Windows.
+
+	Usage: > wsl --install <Distro>
+
+		> wsl --install Ubuntu-18.04
+
+
+09. 
+
+
+
